@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { articleAPI, categoryAPI, deletionRequestAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import RichTextEditor from '../../components/RichTextEditor';
 
 const AuthorDashboard = () => {
+    const navigate = useNavigate();
     const { user } = useAuth();
     const [articles, setArticles] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -235,6 +237,12 @@ const AuthorDashboard = () => {
                                 {article.status === 'draft' && (
                                     <>
                                         <button
+                                            className="btn btn-secondary"
+                                            onClick={() => navigate(`/article/${article.slug}`)}
+                                        >
+                                            👁️ Xem chi tiết
+                                        </button>
+                                        <button
                                             className="btn btn-primary"
                                             onClick={() => handleEdit(article)}
                                         >
@@ -255,13 +263,35 @@ const AuthorDashboard = () => {
                                     </>
                                 )}
                                 {article.status === 'pending' && (
-                                    <span style={{ color: '#856404' }}>⏳ Đang chờ duyệt...</span>
+                                    <>
+                                        <button
+                                            className="btn btn-secondary"
+                                            onClick={() => navigate(`/article/${article.slug}`)}
+                                        >
+                                            👁️ Xem chi tiết
+                                        </button>
+                                        <span style={{ color: '#856404' }}>⏳ Đang chờ duyệt...</span>
+                                    </>
                                 )}
                                 {article.status === 'approved' && (
-                                    <span style={{ color: '#155724' }}>✓ Đã được duyệt, chờ đăng</span>
+                                    <>
+                                        <button
+                                            className="btn btn-secondary"
+                                            onClick={() => navigate(`/article/${article.slug}`)}
+                                        >
+                                            👁️ Xem chi tiết
+                                        </button>
+                                        <span style={{ color: '#155724' }}>✓ Đã được duyệt, chờ đăng</span>
+                                    </>
                                 )}
                                 {article.status === 'rejected' && (
                                     <>
+                                        <button
+                                            className="btn btn-secondary"
+                                            onClick={() => navigate(`/article/${article.slug}`)}
+                                        >
+                                            👁️ Xem chi tiết
+                                        </button>
                                         <span style={{ color: '#721c24' }}>✗ Bị từ chối</span>
                                         <button
                                             className="btn btn-primary"
@@ -279,6 +309,12 @@ const AuthorDashboard = () => {
                                 )}
                                 {article.status === 'published' && (
                                     <>
+                                        <button
+                                            className="btn btn-secondary"
+                                            onClick={() => navigate(`/article/${article.slug}`)}
+                                        >
+                                            👁️ Xem chi tiết
+                                        </button>
                                         <span style={{ color: '#0c5460' }}>📰 Đã đăng • 👁️ {article.views} lượt xem</span>
                                         {(() => {
                                             const deletionReq = getDeletionRequestForArticle(article._id);

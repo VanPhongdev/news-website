@@ -50,8 +50,8 @@ const CategoryNav = () => {
                     {categories.map((category) => (
                         <Link
                             key={category._id}
-                            to={`/?category=${category._id}`}
-                            className={activeCategory === category._id ? 'category-link active' : 'category-link'}
+                            to={`/?category=${category.slug}`}
+                            className={activeCategory === category.slug ? 'category-link active' : 'category-link'}
                         >
                             {category.name}
                         </Link>

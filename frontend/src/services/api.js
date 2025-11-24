@@ -53,6 +53,7 @@ export const categoryAPI = {
 export const articleAPI = {
     getArticles: (params = {}) => api.get('/articles', { params }),
     getArticle: (id) => api.get(`/articles/${id}`),
+    getArticleBySlug: (slug) => api.get(`/articles/slug/${slug}`),
     createArticle: (data) => api.post('/articles', data),
     updateArticle: (id, data) => api.put(`/articles/${id}`, data),
     deleteArticle: (id) => api.delete(`/articles/${id}`),

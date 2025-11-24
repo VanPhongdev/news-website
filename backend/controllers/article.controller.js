@@ -52,19 +52,6 @@ exports.getArticles = async (req, res) => {
                 // Otherwise, add search condition
                 query = { ...query, ...searchCondition };
             }
-        }
-
-        // Filter by category
-        if (req.query.category) {
-            if (query.$and) {
-                query.$and.push({ category: req.query.category });
-            } else {
-                query.category = req.query.category;
-            }
-        }
-
-        // Filter by status (only if user is admin/editor)
-        if (req.query.status && req.user && ['admin', 'editor'].includes(req.user.role)) {
             if (query.$and) {
                 query.$and.push({ status: req.query.status });
             } else {
@@ -119,12 +106,69 @@ exports.getArticles = async (req, res) => {
     }
 };
 
-// @desc    Get single article
+// @desc    Get single article by ID
 // @route   GET /api/articles/:id
 // @access  Public (published) / Private (own articles)
 exports.getArticle = async (req, res) => {
     try {
         const article = await Article.findById(req.params.id)
+            .populate('author', 'username email role')
+            .populate('category', 'name slug');
+
+        if (!article) {
+            return res.status(404).json({
+                success: false,
+                message: 'Article not found'
+            });
+        }
+
+        // Check access permissions
+        if (article.status !== 'published') {
+            if (!req.user) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Access denied'
+                });
+            }
+
+            // Only author, editor, or admin can view unpublished articles
+            if (req.user.role === 'author' && article.author._id.toString() !== req.user._id.toString()) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Access denied'
+                });
+            }
+
+            if (req.user.role === 'reader') {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Access denied'
+                });
+            }
+        } else {
+            // Increment views for published articles
+            article.views += 1;
+            await article.save();
+        }
+
+        res.status(200).json({
+            success: true,
+            data: article
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Get single article by slug
+// @route   GET /api/articles/slug/:slug
+// @access  Public (published) / Private (own articles)
+exports.getArticleBySlug = async (req, res) => {
+    try {
+        const article = await Article.findOne({ slug: req.params.slug })
             .populate('author', 'username email role')
             .populate('category', 'name slug');
 

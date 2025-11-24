@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 const articleSchema = new mongoose.Schema({
     title: {
@@ -59,10 +60,11 @@ const articleSchema = new mongoose.Schema({
 // Auto-generate slug from title before validation
 articleSchema.pre('validate', function (next) {
     if (this.isModified('title') || !this.slug) {
-        this.slug = this.title
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/(^-|-$)/g, '') + '-' + Date.now();
+        this.slug = slugify(this.title, {
+            lower: true,
+            strict: true,
+            locale: 'vi'
+        }) + '-' + Date.now();
     }
     next();
 });

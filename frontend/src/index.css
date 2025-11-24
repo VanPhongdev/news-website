@@ -889,3 +889,7 @@ a:hover {
     font-size: 1.25rem;
   }
 }
+/* Fix underline on navbar logo */
+.navbar a:hover {
+  text-decoration: none !important;
+}

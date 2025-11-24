@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { articleAPI, categoryAPI, deletionRequestAPI } from '../../services/api';
 
 const EditorDashboard = () => {
+    const navigate = useNavigate();
     const [articles, setArticles] = useState([]);
     const [categories, setCategories] = useState([]);
     const [deletionRequests, setDeletionRequests] = useState([]);
@@ -152,6 +154,12 @@ const EditorDashboard = () => {
                                 </div>
                                 <p className="article-excerpt">{article.excerpt}</p>
                                 <div className="article-actions">
+                                    <button
+                                        className="btn btn-secondary"
+                                        onClick={() => navigate(`/article/${article.slug}`)}
+                                    >
+                                        👁️ Xem chi tiết
+                                    </button>
                                     <button
                                         className="btn btn-success"
                                         onClick={() => handleStatusChange(article._id, 'approved')}

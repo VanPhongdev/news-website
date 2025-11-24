@@ -4,7 +4,7 @@ import { articleAPI } from '../services/api';
 import CommentSection from '../components/CommentSection';
 
 const ArticleDetail = () => {
-    const { id } = useParams();
+    const { slug } = useParams();
     const [article, setArticle] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -14,7 +14,7 @@ const ArticleDetail = () => {
 
         const fetchArticle = async () => {
             try {
-                const response = await articleAPI.getArticle(id);
+                const response = await articleAPI.getArticleBySlug(slug);
                 if (isMounted) {
                     setArticle(response.data.data);
                 }
@@ -35,7 +35,7 @@ const ArticleDetail = () => {
         return () => {
             isMounted = false;
         };
-    }, [id]);
+    }, [slug]);
 
     if (loading) {
         return <div className="loading">Đang tải bài viết...</div>;

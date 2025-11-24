@@ -3,6 +3,7 @@ const router = express.Router();
 const {
     getArticles,
     getArticle,
+    getArticleBySlug,
     createArticle,
     updateArticle,
     deleteArticle,
@@ -25,6 +26,10 @@ const optionalAuth = (req, res, next) => {
 router.route('/')
     .get(optionalAuth, getArticles)
     .post(protect, canWriteArticle, createArticle);
+
+// Slug-based route (must be before /:id to avoid conflicts)
+router.route('/slug/:slug')
+    .get(optionalAuth, getArticleBySlug);
 
 router.route('/:id')
     .get(optionalAuth, getArticle)

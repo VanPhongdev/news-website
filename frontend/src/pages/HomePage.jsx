@@ -119,7 +119,7 @@ const HomePage = () => {
                             <>
                                 {/* Featured Article (Latest - Top Left) */}
                                 <div className="featured-article">
-                                    <Link to={`/article/${articles[0]._id}`} className="featured-article-image">
+                                    <Link to={`/article/${articles[0].slug}`} className="featured-article-image">
                                         {articles[0].thumbnail ? (
                                             <img src={articles[0].thumbnail} alt={articles[0].title} />
                                         ) : (
@@ -128,7 +128,7 @@ const HomePage = () => {
                                     </Link>
                                     <div className="featured-article-content">
                                         <h2>
-                                            <Link to={`/article/${articles[0]._id}`}>{articles[0].title}</Link>
+                                            <Link to={`/article/${articles[0].slug}`}>{articles[0].title}</Link>
                                         </h2>
                                         <div className="article-meta">
                                             <span>{articles[0].category?.name}</span>
@@ -146,7 +146,7 @@ const HomePage = () => {
                                     <div className="top-right-articles">
                                         {articles.slice(1, 5).map((article) => (
                                             <div key={article._id} className="article-card">
-                                                <Link to={`/article/${article._id}`} className="article-card-image">
+                                                <Link to={`/article/${article.slug}`} className="article-card-image">
                                                     {article.thumbnail ? (
                                                         <img src={article.thumbnail} alt={article.title} />
                                                     ) : (
@@ -155,7 +155,7 @@ const HomePage = () => {
                                                 </Link>
                                                 <div className="article-card-content">
                                                     <h3>
-                                                        <Link to={`/article/${article._id}`}>{article.title}</Link>
+                                                        <Link to={`/article/${article.slug}`}>{article.title}</Link>
                                                     </h3>
                                                     <div className="article-meta">
                                                         <span>{article.category?.name}</span>
@@ -176,7 +176,7 @@ const HomePage = () => {
                                     <div className="remaining-articles">
                                         {articles.slice(5).map((article) => (
                                             <div key={article._id} className="article-card">
-                                                <Link to={`/article/${article._id}`} className="article-card-image">
+                                                <Link to={`/article/${article.slug}`} className="article-card-image">
                                                     {article.thumbnail ? (
                                                         <img src={article.thumbnail} alt={article.title} />
                                                     ) : (
@@ -185,7 +185,7 @@ const HomePage = () => {
                                                 </Link>
                                                 <div className="article-card-content">
                                                     <h3>
-                                                        <Link to={`/article/${article._id}`}>{article.title}</Link>
+                                                        <Link to={`/article/${article.slug}`}>{article.title}</Link>
                                                     </h3>
                                                     <div className="article-meta">
                                                         <span>{article.category?.name}</span>
