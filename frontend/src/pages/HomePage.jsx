@@ -6,22 +6,17 @@ const HomePage = () => {
     const [articles, setArticles] = useState([]);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [currentPage, setCurrentPage] = useState(1);
     const [pagination, setPagination] = useState(null);
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    // Lấy từ khóa tìm kiếm và chuyên mục từ URL params
+    // Lấy từ khóa tìm kiếm, chuyên mục và trang từ URL params
     const searchTerm = searchParams.get('search') || '';
     const selectedCategory = searchParams.get('category') || '';
+    const currentPage = parseInt(searchParams.get('page'), 10) || 1;
 
     useEffect(() => {
         fetchCategories();
     }, []);
-
-    useEffect(() => {
-        // Reset về trang 1 khi tìm kiếm hoặc chuyên mục thay đổi
-        setCurrentPage(1);
-    }, [searchTerm, selectedCategory]);
 
     useEffect(() => {
         fetchArticles();
@@ -64,14 +59,20 @@ const HomePage = () => {
     };
 
     const handlePageChange = (newPage) => {
-        setCurrentPage(newPage);
+        const newParams = new URLSearchParams(searchParams);
+        if (newPage === 1) {
+            newParams.delete('page');
+        } else {
+            newParams.set('page', newPage);
+        }
+        setSearchParams(newParams);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     // Lấy tên chuyên mục hiện tại để hiển thị
     const getCurrentCategoryName = () => {
         if (!selectedCategory) return null;
-        const category = categories.find(c => c._id === selectedCategory);
+        const category = categories.find(c => c.slug === selectedCategory);
         return category?.name;
     };
 

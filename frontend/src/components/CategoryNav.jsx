@@ -37,21 +37,40 @@ const CategoryNav = () => {
         }
     };
 
+    const handleHomeClick = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const buildCategoryUrl = (categorySlug) => {
+        const params = new URLSearchParams(searchParams);
+        if (categorySlug) {
+            params.set('category', categorySlug);
+        } else {
+            params.delete('category');
+        }
+        // Reset về trang 1 khi chuyển category
+        params.delete('page');
+        const queryString = params.toString();
+        return queryString ? `/?${queryString}` : '/';
+    };
+
     return (
         <div className="category-nav">
             <div className="container">
                 <div className="category-nav-content">
                     <Link
-                        to="/"
+                        to={buildCategoryUrl(null)}
                         className={!activeCategory ? 'category-link active' : 'category-link'}
+                        onClick={handleHomeClick}
                     >
                         🏠 Trang chủ
                     </Link>
                     {categories.map((category) => (
                         <Link
                             key={category._id}
-                            to={`/?category=${category.slug}`}
+                            to={buildCategoryUrl(category.slug)}
                             className={activeCategory === category.slug ? 'category-link active' : 'category-link'}
+                            onClick={handleHomeClick}
                         >
                             {category.name}
                         </Link>

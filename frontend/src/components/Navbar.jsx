@@ -39,6 +39,8 @@ const Navbar = () => {
             } else {
                 newParams.delete('search');
             }
+            // Reset về trang 1 khi tìm kiếm
+            newParams.delete('page');
             // Giữ param chuyên mục nếu có
             setSearchParams(newParams);
         }, 500);
@@ -46,10 +48,20 @@ const Navbar = () => {
         setSearchTimeout(timeout);
     };
 
+    const handleLogoClick = (e) => {
+        e.preventDefault();
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Clear all search params and navigate to home
+        setSearchParams({});
+        setSearchTerm('');
+        navigate('/');
+    };
+
     return (
         <div className="navbar">
             <div className="container navbar-content">
-                <Link to="/">
+                <Link to="/" onClick={handleLogoClick}>
                     <h1>📰Today News</h1>
                 </Link>
                 <div className="navbar-right">

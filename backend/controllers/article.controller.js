@@ -28,16 +28,9 @@ exports.getArticles = async (req, res) => {
             }
         }
 
-        // Search functionality - search in title and content
+        // Search functionality - search only in title
         if (req.query.search) {
             const searchRegex = new RegExp(req.query.search, 'i');
-            const searchCondition = {
-                $or: [
-                    { title: searchRegex },
-                    { content: searchRegex },
-                    { excerpt: searchRegex }
-                ]
-            };
 
             // Combine with existing query
             if (query.$or) {
@@ -45,17 +38,25 @@ exports.getArticles = async (req, res) => {
                 query = {
                     $and: [
                         { $or: query.$or },
-                        searchCondition
+                        { title: searchRegex }
                     ]
                 };
             } else {
                 // Otherwise, add search condition
-                query = { ...query, ...searchCondition };
+                query.title = searchRegex;
             }
-            if (query.$and) {
-                query.$and.push({ status: req.query.status });
-            } else {
-                query.status = req.query.status;
+        }
+
+        // Filter by category (using slug)
+        if (req.query.category) {
+            const Category = require('../models/Category');
+            const category = await Category.findOne({ slug: req.query.category });
+            if (category) {
+                if (query.$and) {
+                    query.$and.push({ category: category._id });
+                } else {
+                    query.category = category._id;
+                }
             }
         }
 
