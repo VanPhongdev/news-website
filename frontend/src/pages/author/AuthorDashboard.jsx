@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { articleAPI, categoryAPI, deletionRequestAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import RichTextEditor from '../../components/RichTextEditor';
@@ -11,6 +11,7 @@ const AuthorDashboard = () => {
     const [categories, setCategories] = useState([]);
     const [deletionRequests, setDeletionRequests] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState('all'); // all, published, draft, pending
     const [showForm, setShowForm] = useState(false);
     const [editingArticle, setEditingArticle] = useState(null);
     const [deletionModal, setDeletionModal] = useState({ show: false, articleId: null, articleTitle: '' });
@@ -30,11 +31,10 @@ const AuthorDashboard = () => {
     const fetchData = async () => {
         try {
             const [articlesRes, categoriesRes, deletionRequestsRes] = await Promise.all([
-                articleAPI.getArticles({ author: user._id }), // Filter by author on backend
+                articleAPI.getArticles({ author: user._id }),
                 categoryAPI.getCategories(),
                 deletionRequestAPI.getMyRequests()
             ]);
-            // Không cần lọc ở đây, backend đã lọc theo tác giả
             setArticles(articlesRes.data.data);
             setCategories(categoriesRes.data.data);
             setDeletionRequests(deletionRequestsRes.data.data);
@@ -114,7 +114,7 @@ const AuthorDashboard = () => {
             alert('Đã gửi yêu cầu xóa bài viết');
             setDeletionModal({ show: false, articleId: null, articleTitle: '' });
             setDeletionReason('');
-            fetchData(); // Refresh to get updated deletion requests
+            fetchData();
         } catch (error) {
             alert('Lỗi: ' + (error.response?.data?.message || 'Không thể gửi yêu cầu'));
         }
@@ -124,306 +124,467 @@ const AuthorDashboard = () => {
         return deletionRequests.find(req => req.article?._id === articleId);
     };
 
+    // Calculate stats
+    const stats = {
+        totalArticles: articles.length,
+        published: articles.filter(a => a.status === 'published').length,
+        drafts: articles.filter(a => a.status === 'draft').length,
+        totalViews: articles.reduce((sum, a) => sum + (a.views || 0), 0)
+    };
+
+    // Filter articles by tab
+    const filteredArticles = articles.filter(article => {
+        if (activeTab === 'all') return true;
+        if (activeTab === 'published') return article.status === 'published';
+        if (activeTab === 'draft') return article.status === 'draft';
+        if (activeTab === 'pending') return article.status === 'pending';
+        return true;
+    });
+
     if (loading) {
-        return <div className="loading">Đang tải dữ liệu...</div>;
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-background-light dark:bg-background-dark">
+                <div className="text-center">
+                    <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                    <p className="mt-4 text-text-secondary">Đang tải dữ liệu...</p>
+                </div>
+            </div>
+        );
     }
 
     return (
-        <div className="container dashboard">
-            <h2>Author Dashboard</h2>
-
-            <div style={{ marginBottom: '2rem' }}>
-                {!showForm && (
-                    <button
-                        className="btn btn-primary"
-                        onClick={() => {
-                            setShowForm(true);
-                            setEditingArticle(null);
-                            setFormData({ title: '', content: '', excerpt: '', thumbnail: '', category: '' });
-                        }}
-                    >
-                        + Viết bài mới
-                    </button>
-                )}
-            </div>
-
-            {showForm && (
-                <div className="form-container" style={{ marginBottom: '2rem' }}>
-                    <h3>{editingArticle ? 'Chỉnh sửa bài viết' : 'Viết bài mới'}</h3>
-                    <form onSubmit={handleSubmit}>
-                        <div className="form-group">
-                            <label>Tiêu đề *</label>
-                            <input
-                                type="text"
-                                value={formData.title}
-                                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                required
-                            />
+        <div className="flex h-screen w-full bg-background-light dark:bg-background-dark font-display">
+            {/* Sidebar */}
+            <aside className="flex flex-col w-64 bg-white dark:bg-surface-dark border-r border-border-light dark:border-border-dark flex-shrink-0">
+                <div className="flex h-full flex-col justify-between p-4">
+                    <div className="flex flex-col gap-4">
+                        {/* User Profile */}
+                        <div className="flex gap-3 items-center px-2 py-1">
+                            <div className="size-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+                                <span className="material-symbols-outlined text-[24px]">person</span>
+                            </div>
+                            <div className="flex flex-col">
+                                <h1 className="text-text-primary dark:text-white text-base font-bold">
+                                    {user.username}
+                                </h1>
+                                <p className="text-text-secondary text-xs">Author</p>
+                            </div>
                         </div>
-                        <div className="form-group">
-                            <label>Chuyên mục *</label>
-                            <select
-                                value={formData.category}
-                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                required
+
+                        {/* Menu */}
+                        <nav className="flex flex-col gap-2 mt-4">
+                            <button
+                                onClick={() => setShowForm(false)}
+                                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${!showForm
+                                    ? 'bg-primary/10 text-primary'
+                                    : 'text-text-primary dark:text-gray-300 hover:bg-surface-light dark:hover:bg-border-dark'
+                                    }`}
                             >
-                                <option value="">-- Chọn chuyên mục --</option>
-                                {categories.map(cat => (
-                                    <option key={cat._id} value={cat._id}>{cat.name}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label>Tóm tắt</label>
-                            <textarea
-                                value={formData.excerpt}
-                                onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                                style={{ minHeight: '80px' }}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Nội dung *</label>
-                            <RichTextEditor
-                                value={formData.content}
-                                onChange={(value) => setFormData({ ...formData, content: value })}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>URL hình ảnh</label>
-                            <input
-                                type="text"
-                                value={formData.thumbnail}
-                                onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
-                                placeholder="https://example.com/image.jpg"
-                            />
-                        </div>
-                        <div className="form-actions">
-                            <button type="submit" className="btn btn-primary">
-                                {editingArticle ? 'Cập nhật bài viết' : 'Tạo bài viết'}
+                                <span className="material-symbols-outlined text-[24px]">book_2</span>
+                                <span className="text-sm font-semibold">Bài viết của tôi</span>
                             </button>
                             <button
-                                type="button"
-                                className="btn btn-danger"
                                 onClick={() => {
-                                    setShowForm(false);
+                                    setShowForm(true);
                                     setEditingArticle(null);
                                     setFormData({ title: '', content: '', excerpt: '', thumbnail: '', category: '' });
                                 }}
+                                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${showForm && !editingArticle
+                                    ? 'bg-primary/10 text-primary'
+                                    : 'text-text-primary dark:text-gray-300 hover:bg-surface-light dark:hover:bg-border-dark'
+                                    }`}
                             >
-                                Hủy
+                                <span className="material-symbols-outlined text-[24px]">edit_square</span>
+                                <span className="text-sm font-medium">Viết bài</span>
                             </button>
-                        </div>
-                    </form>
-                </div>
-            )}
+                            <Link
+                                to="/"
+                                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-primary dark:text-gray-300 hover:bg-surface-light dark:hover:bg-border-dark transition-colors"
+                            >
+                                <span className="material-symbols-outlined text-[24px]">home</span>
+                                <span className="text-sm font-medium">Trang chủ</span>
+                            </Link>
+                        </nav>
+                    </div>
 
-            <div className="article-list">
-                <h3>Bài viết của tôi ({articles.length})</h3>
-                {articles.length === 0 ? (
-                    <p>Bạn chưa có bài viết nào. Hãy viết bài mới!</p>
-                ) : (
-                    articles.map(article => (
-                        <div key={article._id} className="article-item">
-                            <h3>{article.title}</h3>
-                            <div className="article-meta">
-                                <span>Chuyên mục: {article.category?.name}</span>
-                                {' • '}
-                                <span>{new Date(article.createdAt).toLocaleDateString('vi-VN')}</span>
-                                {' • '}
-                                <span className={`status-badge status-${article.status}`}>{article.status}</span>
-                            </div>
-                            {article.excerpt && <p className="article-excerpt">{article.excerpt}</p>}
-                            <div className="article-actions">
-                                {article.status === 'draft' && (
-                                    <>
-                                        <button
-                                            className="btn btn-secondary"
-                                            onClick={() => navigate(`/article/${article.slug}`)}
-                                        >
-                                            👁️ Xem chi tiết
-                                        </button>
-                                        <button
-                                            className="btn btn-primary"
-                                            onClick={() => handleEdit(article)}
-                                        >
-                                            ✏️ Chỉnh sửa
-                                        </button>
-                                        <button
-                                            className="btn btn-success"
-                                            onClick={() => handleSubmitForReview(article._id)}
-                                        >
-                                            📤 Gửi duyệt
-                                        </button>
-                                        <button
-                                            className="btn btn-danger"
-                                            onClick={() => handleDelete(article._id)}
-                                        >
-                                            🗑️ Xóa
-                                        </button>
-                                    </>
-                                )}
-                                {article.status === 'pending' && (
-                                    <>
-                                        <button
-                                            className="btn btn-secondary"
-                                            onClick={() => navigate(`/article/${article.slug}`)}
-                                        >
-                                            👁️ Xem chi tiết
-                                        </button>
-                                        <span style={{ color: '#856404' }}>⏳ Đang chờ duyệt...</span>
-                                    </>
-                                )}
-                                {article.status === 'approved' && (
-                                    <>
-                                        <button
-                                            className="btn btn-secondary"
-                                            onClick={() => navigate(`/article/${article.slug}`)}
-                                        >
-                                            👁️ Xem chi tiết
-                                        </button>
-                                        <span style={{ color: '#155724' }}>✓ Đã được duyệt, chờ đăng</span>
-                                    </>
-                                )}
-                                {article.status === 'rejected' && (
-                                    <>
-                                        <button
-                                            className="btn btn-secondary"
-                                            onClick={() => navigate(`/article/${article.slug}`)}
-                                        >
-                                            👁️ Xem chi tiết
-                                        </button>
-                                        <span style={{ color: '#721c24' }}>✗ Bị từ chối</span>
-                                        <button
-                                            className="btn btn-primary"
-                                            onClick={() => handleEdit(article)}
-                                        >
-                                            ✏️ Chỉnh sửa lại
-                                        </button>
-                                        <button
-                                            className="btn btn-success"
-                                            onClick={() => handleSubmitForReview(article._id)}
-                                        >
-                                            📤 Gửi lại để duyệt
-                                        </button>
-                                    </>
-                                )}
-                                {article.status === 'published' && (
-                                    <>
-                                        <button
-                                            className="btn btn-secondary"
-                                            onClick={() => navigate(`/article/${article.slug}`)}
-                                        >
-                                            👁️ Xem chi tiết
-                                        </button>
-                                        <span style={{ color: '#0c5460' }}>📰 Đã đăng • 👁️ {article.views} lượt xem</span>
-                                        {(() => {
-                                            const deletionReq = getDeletionRequestForArticle(article._id);
-                                            if (deletionReq) {
-                                                if (deletionReq.status === 'pending') {
-                                                    return <span style={{ color: '#856404', marginLeft: '1rem' }}>🗑️ Đang chờ duyệt xóa</span>;
-                                                } else if (deletionReq.status === 'rejected') {
-                                                    return (
-                                                        <>
-                                                            <span style={{ color: '#721c24', marginLeft: '1rem' }}>❌ Yêu cầu xóa bị từ chối</span>
-                                                            <button
-                                                                className="btn btn-danger"
-                                                                style={{ marginLeft: '0.5rem' }}
-                                                                onClick={() => handleRequestDeletion(article._id, article.title)}
-                                                            >
-                                                                🔄 Gửi lại yêu cầu
-                                                            </button>
-                                                        </>
-                                                    );
-                                                }
-                                            } else {
-                                                return (
-                                                    <button
-                                                        className="btn btn-danger"
-                                                        style={{ marginLeft: '1rem' }}
-                                                        onClick={() => handleRequestDeletion(article._id, article.title)}
-                                                    >
-                                                        🗑️ Yêu cầu xóa
-                                                    </button>
-                                                );
-                                            }
-                                        })()}
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    ))
-                )}
-            </div>
-
-            {/* Deletion Request Modal */}
-            {deletionModal.show && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 1000
-                }}>
-                    <div style={{
-                        backgroundColor: 'white',
-                        padding: '2rem',
-                        borderRadius: '10px',
-                        minWidth: '500px',
-                        maxWidth: '600px',
-                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-                    }}>
-                        <h3 style={{ marginBottom: '1rem' }}>Yêu cầu xóa bài viết</h3>
-                        <p style={{ marginBottom: '1rem', color: '#666' }}>
-                            Bài viết: <strong>{deletionModal.articleTitle}</strong>
-                        </p>
-                        <div className="form-group">
-                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
-                                Lý do xóa bài viết: <span style={{ color: 'red' }}>*</span>
-                            </label>
-                            <textarea
-                                value={deletionReason}
-                                onChange={(e) => setDeletionReason(e.target.value)}
-                                placeholder="Nhập lý do tại sao bạn muốn xóa bài viết này (ít nhất 10 ký tự)..."
-                                style={{
-                                    width: '100%',
-                                    minHeight: '120px',
-                                    padding: '0.75rem',
-                                    borderRadius: '5px',
-                                    border: '2px solid #e0e0e0',
-                                    fontSize: '1rem',
-                                    resize: 'vertical'
-                                }}
-                            />
-                            <small style={{ color: '#666', marginTop: '0.5rem', display: 'block' }}>
-                                {deletionReason.length}/500 ký tự
-                            </small>
-                        </div>
-                        <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', justifyContent: 'flex-end' }}>
-                            <button
-                                className="btn btn-secondary"
-                                onClick={() => {
-                                    setDeletionModal({ show: false, articleId: null, articleTitle: '' });
-                                    setDeletionReason('');
-                                }}
-                            >
-                                Hủy
-                            </button>
-                            <button
-                                className="btn btn-danger"
-                                onClick={confirmDeletionRequest}
-                            >
-                                Gửi yêu cầu
-                            </button>
-                        </div>
+                    {/* Logout Button */}
+                    <div className="pt-4 border-t border-border-light dark:border-border-dark">
+                        <Link
+                            to="/"
+                            className="flex items-center gap-3 px-3 py-2 w-full text-text-secondary hover:text-red-500 transition-colors"
+                        >
+                            <span className="material-symbols-outlined text-[24px]">logout</span>
+                            <span className="text-sm font-medium">Đăng xuất</span>
+                        </Link>
                     </div>
                 </div>
-            )}
-        </div>
+            </aside>
+
+            {/* Main Content */}
+            <main className="flex flex-col flex-1 h-full overflow-hidden">
+                <div className="flex h-full grow flex-col overflow-y-auto">
+                    <div className="px-8 lg:px-12 flex flex-1 justify-center py-8">
+                        <div className="flex flex-col w-full max-w-[1024px] flex-1 gap-8">
+                            {!showForm ? (
+                                <>
+                                    {/* Stats Cards */}
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div className="flex flex-col gap-2 rounded-xl p-5 bg-white dark:bg-surface-dark shadow-sm border border-border-light dark:border-border-dark">
+                                            <div className="flex items-center gap-2">
+                                                <span className="material-symbols-outlined text-primary text-[20px]">bar_chart</span>
+                                                <p className="text-text-secondary text-sm font-medium">Tổng lượt xem</p>
+                                            </div>
+                                            <p className="text-text-primary dark:text-white text-2xl font-bold">{stats.totalViews.toLocaleString()}</p>
+                                        </div>
+                                        <div className="flex flex-col gap-2 rounded-xl p-5 bg-white dark:bg-surface-dark shadow-sm border border-border-light dark:border-border-dark">
+                                            <div className="flex items-center gap-2">
+                                                <span className="material-symbols-outlined text-primary text-[20px]">check_circle</span>
+                                                <p className="text-text-secondary text-sm font-medium">Đã đăng</p>
+                                            </div>
+                                            <p className="text-text-primary dark:text-white text-2xl font-bold">{stats.published}</p>
+                                        </div>
+                                        <div className="flex flex-col gap-2 rounded-xl p-5 bg-white dark:bg-surface-dark shadow-sm border border-border-light dark:border-border-dark">
+                                            <div className="flex items-center gap-2">
+                                                <span className="material-symbols-outlined text-text-secondary text-[20px]">edit_note</span>
+                                                <p className="text-text-secondary text-sm font-medium">Bản nháp</p>
+                                            </div>
+                                            <p className="text-text-primary dark:text-white text-2xl font-bold">{stats.drafts}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Articles Table */}
+                                    <div className="flex flex-col bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark overflow-hidden">
+                                        {/* Tabs */}
+                                        <div className="border-b border-border-light dark:border-border-dark px-6">
+                                            <div className="flex gap-8 overflow-x-auto">
+                                                <button
+                                                    onClick={() => setActiveTab('all')}
+                                                    className={`group flex flex-col items-center justify-center border-b-[3px] pb-3 pt-4 px-1 transition-colors ${activeTab === 'all'
+                                                        ? 'border-b-primary'
+                                                        : 'border-b-transparent hover:border-b-gray-300'
+                                                        }`}
+                                                >
+                                                    <p className={`text-sm font-bold ${activeTab === 'all' ? 'text-primary' : 'text-text-secondary'}`}>
+                                                        Tất cả ({articles.length})
+                                                    </p>
+                                                </button>
+                                                <button
+                                                    onClick={() => setActiveTab('published')}
+                                                    className={`group flex flex-col items-center justify-center border-b-[3px] pb-3 pt-4 px-1 transition-colors ${activeTab === 'published'
+                                                        ? 'border-b-primary'
+                                                        : 'border-b-transparent hover:border-b-gray-300'
+                                                        }`}
+                                                >
+                                                    <p className={`text-sm font-medium ${activeTab === 'published' ? 'text-primary' : 'text-text-secondary'}`}>
+                                                        Đã đăng ({stats.published})
+                                                    </p>
+                                                </button>
+                                                <button
+                                                    onClick={() => setActiveTab('draft')}
+                                                    className={`group flex flex-col items-center justify-center border-b-[3px] pb-3 pt-4 px-1 transition-colors ${activeTab === 'draft'
+                                                        ? 'border-b-primary'
+                                                        : 'border-b-transparent hover:border-b-gray-300'
+                                                        }`}
+                                                >
+                                                    <p className={`text-sm font-medium ${activeTab === 'draft' ? 'text-primary' : 'text-text-secondary'}`}>
+                                                        Bản nháp ({stats.drafts})
+                                                    </p>
+                                                </button>
+                                                <button
+                                                    onClick={() => setActiveTab('pending')}
+                                                    className={`group flex flex-col items-center justify-center border-b-[3px] pb-3 pt-4 px-1 transition-colors ${activeTab === 'pending'
+                                                        ? 'border-b-primary'
+                                                        : 'border-b-transparent hover:border-b-gray-300'
+                                                        }`}
+                                                >
+                                                    <p className={`text-sm font-medium ${activeTab === 'pending' ? 'text-primary' : 'text-text-secondary'}`}>
+                                                        Chờ duyệt ({articles.filter(a => a.status === 'pending').length})
+                                                    </p>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {/* Table */}
+                                        <div className="w-full overflow-x-auto">
+                                            <table className="w-full min-w-[700px]">
+                                                <thead className="bg-surface-light dark:bg-background-dark border-b border-border-light dark:border-border-dark">
+                                                    <tr>
+                                                        <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary w-[40%]">Tiêu đề bài viết</th>
+                                                        <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary w-[15%]">Trạng thái</th>
+                                                        <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary w-[20%]">Ngày tạo</th>
+                                                        <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary w-[10%]">Lượt xem</th>
+                                                        <th className="px-6 py-4 text-right text-xs font-semibold uppercase text-text-secondary w-[15%]">Hành động</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="divide-y divide-border-light dark:divide-border-dark">
+                                                    {filteredArticles.length === 0 ? (
+                                                        <tr>
+                                                            <td colSpan="5" className="px-6 py-8 text-center text-text-secondary">
+                                                                Không có bài viết nào
+                                                            </td>
+                                                        </tr>
+                                                    ) : (
+                                                        filteredArticles.map(article => (
+                                                            <tr key={article._id} className="group hover:bg-surface-light dark:hover:bg-background-dark transition-colors">
+                                                                <td className="px-6 py-4">
+                                                                    <div className="flex items-center gap-3">
+                                                                        {article.thumbnail && (
+                                                                            <div
+                                                                                className="h-10 w-10 rounded bg-gray-200 dark:bg-gray-700 flex-shrink-0 bg-cover bg-center"
+                                                                                style={{ backgroundImage: `url(${article.thumbnail})` }}
+                                                                            ></div>
+                                                                        )}
+                                                                        <div>
+                                                                            <p className="text-sm font-bold text-text-primary dark:text-white group-hover:text-primary transition-colors">
+                                                                                {article.title}
+                                                                            </p>
+                                                                            <p className="text-xs text-text-secondary">{article.category?.name}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td className="px-6 py-4">
+                                                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${article.status === 'published' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                                                                        article.status === 'draft' ? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' :
+                                                                            article.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                                                                                'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                                                                        }`}>
+                                                                        {article.status === 'published' ? 'Đã đăng' :
+                                                                            article.status === 'draft' ? 'Bản nháp' :
+                                                                                article.status === 'pending' ? 'Chờ duyệt' : 'Từ chối'}
+                                                                    </span>
+                                                                </td>
+                                                                <td className="px-6 py-4">
+                                                                    <p className="text-sm text-text-primary dark:text-gray-300">
+                                                                        {new Date(article.createdAt).toLocaleDateString('vi-VN')}
+                                                                    </p>
+                                                                </td>
+                                                                <td className="px-6 py-4">
+                                                                    <p className="text-sm font-bold text-text-primary dark:text-white">
+                                                                        {article.views || 0}
+                                                                    </p>
+                                                                </td>
+                                                                <td className="px-6 py-4 text-right">
+                                                                    <div className="flex items-center justify-end gap-1">
+                                                                        {article.status === 'draft' && (
+                                                                            <>
+                                                                                <button
+                                                                                    onClick={() => handleEdit(article)}
+                                                                                    className="text-text-secondary hover:text-primary p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                                    title="Chỉnh sửa"
+                                                                                >
+                                                                                    <span className="material-symbols-outlined text-[20px]">edit</span>
+                                                                                </button>
+                                                                                <button
+                                                                                    onClick={() => handleSubmitForReview(article._id)}
+                                                                                    className="text-text-secondary hover:text-green-500 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                                    title="Gửi duyệt"
+                                                                                >
+                                                                                    <span className="material-symbols-outlined text-[20px]">send</span>
+                                                                                </button>
+                                                                                <button
+                                                                                    onClick={() => handleDelete(article._id)}
+                                                                                    className="text-text-secondary hover:text-red-500 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                                    title="Xóa"
+                                                                                >
+                                                                                    <span className="material-symbols-outlined text-[20px]">delete</span>
+                                                                                </button>
+                                                                            </>
+                                                                        )}
+                                                                        {article.status === 'pending' && (
+                                                                            <button
+                                                                                onClick={() => navigate(`/article/${article.slug}`)}
+                                                                                className="text-text-secondary hover:text-primary p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                                title="Xem chi tiết"
+                                                                            >
+                                                                                <span className="material-symbols-outlined text-[20px]">visibility</span>
+                                                                            </button>
+                                                                        )}
+                                                                        {article.status === 'rejected' && (
+                                                                            <>
+                                                                                <button
+                                                                                    onClick={() => handleEdit(article)}
+                                                                                    className="text-text-secondary hover:text-primary p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                                    title="Chỉnh sửa lại"
+                                                                                >
+                                                                                    <span className="material-symbols-outlined text-[20px]">edit</span>
+                                                                                </button>
+                                                                                <button
+                                                                                    onClick={() => handleSubmitForReview(article._id)}
+                                                                                    className="text-text-secondary hover:text-green-500 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                                    title="Gửi lại duyệt"
+                                                                                >
+                                                                                    <span className="material-symbols-outlined text-[20px]">send</span>
+                                                                                </button>
+                                                                            </>
+                                                                        )}
+                                                                        {article.status === 'published' && (
+                                                                            <>
+                                                                                <button
+                                                                                    onClick={() => navigate(`/article/${article.slug}`)}
+                                                                                    className="text-text-secondary hover:text-primary p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                                    title="Xem bài viết"
+                                                                                >
+                                                                                    <span className="material-symbols-outlined text-[20px]">visibility</span>
+                                                                                </button>
+                                                                                {!getDeletionRequestForArticle(article._id) && (
+                                                                                    <button
+                                                                                        onClick={() => handleRequestDeletion(article._id, article.title)}
+                                                                                        className="text-text-secondary hover:text-red-500 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                                        title="Yêu cầu xóa"
+                                                                                    >
+                                                                                        <span className="material-symbols-outlined text-[20px]">delete</span>
+                                                                                    </button>
+                                                                                )}
+                                                                            </>
+                                                                        )}
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        ))
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                /* Create/Edit Form */
+                                <div className="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark p-8">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <h3 className="text-2xl font-bold text-text-primary dark:text-white">
+                                            {editingArticle ? 'Chỉnh sửa bài viết' : 'Viết bài mới'}
+                                        </h3>
+                                        <button
+                                            onClick={() => {
+                                                setShowForm(false);
+                                                setEditingArticle(null);
+                                                setFormData({ title: '', content: '', excerpt: '', thumbnail: '', category: '' });
+                                            }}
+                                            className="text-text-secondary hover:text-text-primary transition-colors"
+                                        >
+                                            <span className="material-symbols-outlined text-[24px]">close</span>
+                                        </button>
+                                    </div>
+                                    <form onSubmit={handleSubmit} className="space-y-6">
+                                        <div>
+                                            <label className="block text-text-primary dark:text-white text-sm font-medium mb-2">Tiêu đề *</label>
+                                            <input
+                                                type="text"
+                                                value={formData.title}
+                                                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                                className="w-full px-4 py-2 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-text-primary dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-text-primary dark:text-white text-sm font-medium mb-2">Chuyên mục *</label>
+                                            <select
+                                                value={formData.category}
+                                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                                className="w-full px-4 py-2 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-text-primary dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                                required
+                                            >
+                                                <option value="">-- Chọn chuyên mục --</option>
+                                                {categories.map(cat => (
+                                                    <option key={cat._id} value={cat._id}>{cat.name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-text-primary dark:text-white text-sm font-medium mb-2">Tóm tắt</label>
+                                            <textarea
+                                                value={formData.excerpt}
+                                                onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                                                className="w-full px-4 py-2 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-text-primary dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[80px]"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-text-primary dark:text-white text-sm font-medium mb-2">Nội dung *</label>
+                                            <RichTextEditor
+                                                value={formData.content}
+                                                onChange={(value) => setFormData({ ...formData, content: value })}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-text-primary dark:text-white text-sm font-medium mb-2">URL hình ảnh</label>
+                                            <input
+                                                type="text"
+                                                value={formData.thumbnail}
+                                                onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
+                                                className="w-full px-4 py-2 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-text-primary dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                                placeholder="https://example.com/image.jpg"
+                                            />
+                                        </div>
+                                        <div className="flex gap-3 justify-end pt-4">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setShowForm(false);
+                                                    setEditingArticle(null);
+                                                    setFormData({ title: '', content: '', excerpt: '', thumbnail: '', category: '' });
+                                                }}
+                                                className="px-5 py-2 rounded-lg border border-border-light dark:border-border-dark text-text-primary dark:text-white hover:bg-surface-light dark:hover:bg-border-dark transition-colors"
+                                            >
+                                                Hủy
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                className="px-5 py-2 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors shadow-sm"
+                                            >
+                                                {editingArticle ? 'Cập nhật bài viết' : 'Tạo bài viết'}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div >
+            </main >
+
+            {/* Deletion Request Modal */}
+            {
+                deletionModal.show && (
+                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                        <div className="bg-white dark:bg-surface-dark rounded-xl p-6 min-w-[500px] max-w-[600px] shadow-xl">
+                            <h3 className="text-text-primary dark:text-white text-xl font-bold mb-4">Yêu cầu xóa bài viết</h3>
+                            <p className="text-text-secondary mb-4">
+                                Bài viết: <strong>{deletionModal.articleTitle}</strong>
+                            </p>
+                            <div className="mb-4">
+                                <label className="block text-text-primary dark:text-white text-sm font-medium mb-2">
+                                    Lý do xóa bài viết: <span className="text-red-500">*</span>
+                                </label>
+                                <textarea
+                                    value={deletionReason}
+                                    onChange={(e) => setDeletionReason(e.target.value)}
+                                    placeholder="Nhập lý do tại sao bạn muốn xóa bài viết này (ít nhất 10 ký tự)..."
+                                    className="w-full px-4 py-2 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-text-primary dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[120px]"
+                                />
+                                <small className="text-text-secondary">{deletionReason.length}/500 ký tự</small>
+                            </div>
+                            <div className="flex gap-3 justify-end">
+                                <button
+                                    onClick={() => {
+                                        setDeletionModal({ show: false, articleId: null, articleTitle: '' });
+                                        setDeletionReason('');
+                                    }}
+                                    className="px-4 py-2 bg-surface-light dark:bg-border-dark text-text-primary dark:text-white rounded-lg hover:bg-border-light dark:hover:bg-border-dark transition-colors"
+                                >
+                                    Hủy
+                                </button>
+                                <button
+                                    onClick={confirmDeletionRequest}
+                                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                                >
+                                    Gửi yêu cầu
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+        </div >
     );
 };
 

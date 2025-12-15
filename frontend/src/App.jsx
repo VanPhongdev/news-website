@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
-import CategoryNav from './components/CategoryNav';
+import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import HomePage from './pages/HomePage';
 import Login from './pages/Login';
@@ -16,7 +16,6 @@ function App() {
         <AuthProvider>
             <Router>
                 <Navbar />
-                <CategoryNav />
                 <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/login" element={<Login />} />
@@ -50,6 +49,7 @@ function App() {
                         }
                     />
                 </Routes>
+                <Footer />
             </Router>
         </AuthProvider>
     );

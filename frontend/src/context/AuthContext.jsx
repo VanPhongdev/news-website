@@ -33,33 +33,19 @@ export const AuthProvider = ({ children }) => {
     };
 
     const login = async (username, password) => {
-        try {
-            const response = await authAPI.login({ username, password });
-            const { token, ...userData } = response.data.data;
-            localStorage.setItem('token', token);
-            setUser(userData);
-            return { success: true };
-        } catch (error) {
-            return {
-                success: false,
-                message: error.response?.data?.message || 'Login failed'
-            };
-        }
+        const response = await authAPI.login({ username, password });
+        const { token, ...userData } = response.data.data;
+        localStorage.setItem('token', token);
+        setUser(userData);
+        return userData; // Return user data for role-based redirect
     };
 
     const register = async (username, email, password, role = 'reader') => {
-        try {
-            const response = await authAPI.register({ username, email, password, role });
-            const { token, ...userData } = response.data.data;
-            localStorage.setItem('token', token);
-            setUser(userData);
-            return { success: true };
-        } catch (error) {
-            return {
-                success: false,
-                message: error.response?.data?.message || 'Registration failed'
-            };
-        }
+        const response = await authAPI.register({ username, email, password, role });
+        const { token, ...userData } = response.data.data;
+        localStorage.setItem('token', token);
+        setUser(userData);
+        return userData; // Return user data for role-based redirect
     };
 
     const logout = () => {

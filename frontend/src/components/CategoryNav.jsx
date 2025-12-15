@@ -1,31 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { categoryAPI } from '../services/api';
 
 const CategoryNav = () => {
     const [categories, setCategories] = useState([]);
     const [searchParams] = useSearchParams();
-    const activeCategory = searchParams.get('category');
+    const selectedCategory = searchParams.get('category') || '';
 
     useEffect(() => {
         fetchCategories();
-
-        // Polling: làm mới danh mục mỗi 30 giây
-        const interval = setInterval(() => {
-            fetchCategories();
-        }, 30000);
-
-        // Làm mới khi cửa sổ được focus
-        const handleFocus = () => {
-            fetchCategories();
-        };
-
-        window.addEventListener('focus', handleFocus);
-
-        return () => {
-            clearInterval(interval);
-            window.removeEventListener('focus', handleFocus);
-        };
     }, []);
 
     const fetchCategories = async () => {
@@ -37,41 +20,47 @@ const CategoryNav = () => {
         }
     };
 
-    const handleHomeClick = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Icon mapping for categories
+    const categoryIcons = {
+        'thoi-su': 'newspaper',
+        'kinh-te': 'trending_up',
+        'cong-nghe': 'computer',
+        'the-thao': 'sports_soccer',
+        'giai-tri': 'movie',
+        'doi-song': 'favorite',
+        'default': 'article'
     };
 
-    const buildCategoryUrl = (categorySlug) => {
-        const params = new URLSearchParams(searchParams);
-        if (categorySlug) {
-            params.set('category', categorySlug);
-        } else {
-            params.delete('category');
-        }
-        // Reset về trang 1 khi chuyển category
-        params.delete('page');
-        const queryString = params.toString();
-        return queryString ? `/?${queryString}` : '/';
+    const getCategoryIcon = (slug) => {
+        return categoryIcons[slug] || categoryIcons['default'];
     };
 
     return (
-        <div className="category-nav">
-            <div className="container">
-                <div className="category-nav-content">
+        <div className="bg-white dark:bg-background-dark border-b border-slate-200 dark:border-[#283039] sticky top-[61px] z-40">
+            <div className="max-w-[1280px] mx-auto px-4 lg:px-10">
+                <div className="flex gap-2 py-3 overflow-x-auto scrollbar-thin">
                     <Link
-                        to={buildCategoryUrl(null)}
-                        className={!activeCategory ? 'category-link active' : 'category-link'}
-                        onClick={handleHomeClick}
+                        to="/"
+                        className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${!selectedCategory
+                                ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-surface-dark'
+                            }`}
                     >
-                        🏠 Trang chủ
+                        <span className="material-symbols-outlined text-[18px]">home</span>
+                        Tất cả
                     </Link>
                     {categories.map((category) => (
                         <Link
                             key={category._id}
-                            to={buildCategoryUrl(category.slug)}
-                            className={activeCategory === category.slug ? 'category-link active' : 'category-link'}
-                            onClick={handleHomeClick}
+                            to={`/?category=${category.slug}`}
+                            className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${selectedCategory === category.slug
+                                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                    : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-surface-dark'
+                                }`}
                         >
+                            <span className="material-symbols-outlined text-[18px]">
+                                {getCategoryIcon(category.slug)}
+                            </span>
                             {category.name}
                         </Link>
                     ))}
