@@ -18,6 +18,14 @@ exports.register = async (req, res) => {
             });
         }
 
+        // Validate password length
+        if (!password || password.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: 'Password must be at least 6 characters long'
+            });
+        }
+
         // Validate role - only allow 'reader' and 'author' during registration
         const allowedRoles = ['reader', 'author'];
         const userRole = role || 'reader';
