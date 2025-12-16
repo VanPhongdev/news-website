@@ -121,7 +121,7 @@ const AuthorDashboard = () => {
     };
 
     const getDeletionRequestForArticle = (articleId) => {
-        return deletionRequests.find(req => req.article?._id === articleId);
+        return deletionRequests.find(req => req.article?._id === articleId && req.status === 'pending');
     };
 
     // Calculate stats
@@ -345,12 +345,10 @@ const AuthorDashboard = () => {
                                                             <td className="px-6 py-4">
                                                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${article.status === 'published' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
                                                                     article.status === 'draft' ? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' :
-                                                                        article.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
-                                                                            'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                                                                        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
                                                                     }`}>
                                                                     {article.status === 'published' ? 'Đã đăng' :
-                                                                        article.status === 'draft' ? 'Bản nháp' :
-                                                                            article.status === 'pending' ? 'Chờ duyệt' : 'Từ chối'}
+                                                                        article.status === 'draft' ? 'Bản nháp' : 'Chờ duyệt'}
                                                                 </span>
                                                             </td>
                                                             <td className="px-6 py-4">
@@ -398,24 +396,6 @@ const AuthorDashboard = () => {
                                                                         >
                                                                             <span className="material-symbols-outlined text-[20px]">visibility</span>
                                                                         </button>
-                                                                    )}
-                                                                    {article.status === 'rejected' && (
-                                                                        <>
-                                                                            <button
-                                                                                onClick={() => handleEdit(article)}
-                                                                                className="text-text-secondary hover:text-primary p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                                                                                title="Chỉnh sửa lại"
-                                                                            >
-                                                                                <span className="material-symbols-outlined text-[20px]">edit</span>
-                                                                            </button>
-                                                                            <button
-                                                                                onClick={() => handleSubmitForReview(article._id)}
-                                                                                className="text-text-secondary hover:text-green-500 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                                                                                title="Gửi lại duyệt"
-                                                                            >
-                                                                                <span className="material-symbols-outlined text-[20px]">send</span>
-                                                                            </button>
-                                                                        </>
                                                                     )}
                                                                     {article.status === 'published' && (
                                                                         <>

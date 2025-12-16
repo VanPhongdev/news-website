@@ -318,7 +318,7 @@ exports.deleteArticle = async (req, res) => {
 
         // Check permissions
         if (req.user.role === 'author') {
-            // Authors can only delete their own draft articles
+            // Authors can only delete their own draft articles (rejected articles are auto-converted to draft)
             if (article.author.toString() !== req.user._id.toString()) {
                 return res.status(403).json({
                     success: false,
@@ -369,11 +369,11 @@ exports.submitArticle = async (req, res) => {
             });
         }
 
-        // Can only submit draft or rejected articles
-        if (article.status !== 'draft' && article.status !== 'rejected') {
+        // Can only submit draft articles (rejected articles are automatically converted to draft)
+        if (article.status !== 'draft') {
             return res.status(400).json({
                 success: false,
-                message: 'Can only submit draft or rejected articles'
+                message: 'Can only submit draft articles'
             });
         }
 
@@ -420,7 +420,8 @@ exports.updateArticleStatus = async (req, res) => {
             });
         }
 
-        article.status = status;
+        // When rejected, automatically convert to draft so author can edit and resubmit
+        article.status = status === 'rejected' ? 'draft' : status;
         await article.save();
 
         article = await Article.findById(article._id)
