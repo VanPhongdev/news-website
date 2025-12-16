@@ -15,6 +15,7 @@ const EditorDashboard = () => {
     const [newCategory, setNewCategory] = useState({ name: '', description: '' });
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         fetchData();
     }, []);
 

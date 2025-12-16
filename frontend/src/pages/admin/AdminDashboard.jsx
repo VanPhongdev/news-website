@@ -17,6 +17,7 @@ const AdminDashboard = () => {
     const [selectedRole, setSelectedRole] = useState('');
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         fetchData();
     }, []);
 
