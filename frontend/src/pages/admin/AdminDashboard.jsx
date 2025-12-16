@@ -13,6 +13,8 @@ const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
     const [roleFilter, setRoleFilter] = useState('all');
     const [deletionStatusFilter, setDeletionStatusFilter] = useState('pending');
+    const [articleAuthorFilter, setArticleAuthorFilter] = useState('all');
+    const [articleCategoryFilter, setArticleCategoryFilter] = useState('all');
     const [roleChangeModal, setRoleChangeModal] = useState({ show: false, userId: null, currentRole: '' });
     const [selectedRole, setSelectedRole] = useState('');
 
@@ -447,7 +449,35 @@ const AdminDashboard = () => {
                         {activeTab === 'articles' && (
                             <div className="rounded-xl bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark shadow-sm overflow-hidden">
                                 <div className="px-6 py-4 border-b border-border-light dark:border-border-dark">
-                                    <h3 className="text-text-primary dark:text-white text-lg font-bold">Danh sách bài viết</h3>
+                                    <div className="flex justify-between items-center">
+                                        <h3 className="text-text-primary dark:text-white text-lg font-bold">Danh sách bài viết</h3>
+                                        <div className="flex gap-3">
+                                            <select
+                                                value={articleAuthorFilter}
+                                                onChange={(e) => setArticleAuthorFilter(e.target.value)}
+                                                className="px-3 py-2 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-text-primary dark:text-white text-sm"
+                                            >
+                                                <option value="all">Tất cả tác giả ({articles.length})</option>
+                                                {users.filter(u => u.role === 'author').map(author => (
+                                                    <option key={author._id} value={author._id}>
+                                                        {author.username} ({articles.filter(a => a.author?._id === author._id).length})
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <select
+                                                value={articleCategoryFilter}
+                                                onChange={(e) => setArticleCategoryFilter(e.target.value)}
+                                                className="px-3 py-2 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-text-primary dark:text-white text-sm"
+                                            >
+                                                <option value="all">Tất cả chuyên mục ({articles.length})</option>
+                                                {categories.map(cat => (
+                                                    <option key={cat._id} value={cat._id}>
+                                                        {cat.name} ({articles.filter(a => a.category?._id === cat._id).length})
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left border-collapse">
@@ -462,33 +492,39 @@ const AdminDashboard = () => {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-border-light dark:divide-border-dark">
-                                            {articles.map(article => (
-                                                <tr key={article._id} className="hover:bg-surface-light dark:hover:bg-background-dark transition-colors">
-                                                    <td className="px-6 py-4 text-text-primary dark:text-white text-sm font-medium max-w-xs truncate">{article.title}</td>
-                                                    <td className="px-6 py-4 text-text-secondary text-sm">{article.author?.username}</td>
-                                                    <td className="px-6 py-4 text-text-secondary text-sm">{article.category?.name}</td>
-                                                    <td className="px-6 py-4">
-                                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${article.status === 'published' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                                                            article.status === 'draft' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
-                                                                'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
-                                                            }`}>
-                                                            {article.status === 'published' ? 'Đã đăng' :
-                                                                article.status === 'draft' ? 'Bản nháp' :
-                                                                    article.status === 'pending' ? 'Chờ duyệt' :
-                                                                        article.status === 'approved' ? 'Đã duyệt' : 'Từ chối'}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-6 py-4 text-text-secondary text-sm">{article.views || 0}</td>
-                                                    <td className="px-6 py-4 text-right">
-                                                        <button
-                                                            onClick={() => handleDeleteArticle(article._id)}
-                                                            className="px-3 py-1 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 rounded text-xs font-medium hover:bg-red-200 dark:hover:bg-red-800 transition-colors"
-                                                        >
-                                                            Xóa
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))}
+                                            {articles
+                                                .filter(article => {
+                                                    if (articleAuthorFilter !== 'all' && article.author?._id !== articleAuthorFilter) return false;
+                                                    if (articleCategoryFilter !== 'all' && article.category?._id !== articleCategoryFilter) return false;
+                                                    return true;
+                                                })
+                                                .map(article => (
+                                                    <tr key={article._id} className="hover:bg-surface-light dark:hover:bg-background-dark transition-colors">
+                                                        <td className="px-6 py-4 text-text-primary dark:text-white text-sm font-medium max-w-xs truncate">{article.title}</td>
+                                                        <td className="px-6 py-4 text-text-secondary text-sm">{article.author?.username}</td>
+                                                        <td className="px-6 py-4 text-text-secondary text-sm">{article.category?.name}</td>
+                                                        <td className="px-6 py-4">
+                                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${article.status === 'published' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                                                                article.status === 'draft' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                                                                    'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
+                                                                }`}>
+                                                                {article.status === 'published' ? 'Đã đăng' :
+                                                                    article.status === 'draft' ? 'Bản nháp' :
+                                                                        article.status === 'pending' ? 'Chờ duyệt' :
+                                                                            article.status === 'approved' ? 'Đã duyệt' : 'Từ chối'}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-6 py-4 text-text-secondary text-sm">{article.views || 0}</td>
+                                                        <td className="px-6 py-4 text-right">
+                                                            <button
+                                                                onClick={() => handleDeleteArticle(article._id)}
+                                                                className="px-3 py-1 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 rounded text-xs font-medium hover:bg-red-200 dark:hover:bg-red-800 transition-colors"
+                                                            >
+                                                                Xóa
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
                                         </tbody>
                                     </table>
                                 </div>
