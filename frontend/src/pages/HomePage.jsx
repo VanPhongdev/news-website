@@ -93,7 +93,7 @@ const HomePage = () => {
     };
 
     return (
-        <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased">
+        <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-light font-display text-slate-900 antialiased">
             <main className="layout-container flex h-full grow flex-col py-6 lg:py-8">
                 <div className="px-4 lg:px-10 flex justify-center">
                     <div className="layout-content-container flex flex-col max-w-[1280px] flex-1 gap-8">
@@ -147,19 +147,19 @@ const HomePage = () => {
 
                                     {/* Side List (Right of Hero) */}
                                     <div className="lg:col-span-4 flex flex-col gap-4">
-                                        <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                        <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
                                             <span className="material-symbols-outlined text-primary">trending_up</span>
                                             Tin Nổi Bật
                                         </h3>
                                         <div className="flex flex-col gap-3 h-full">
                                             {articles.slice(1, 4).map((article) => (
-                                                <article key={article._id} className="flex gap-4 p-3 rounded-lg bg-white dark:bg-surface-dark shadow-sm border border-slate-100 dark:border-[#283039] hover:border-primary/50 transition-all cursor-pointer group">
+                                                <article key={article._id} className="flex gap-4 p-3 rounded-lg bg-white shadow-sm border border-slate-100 hover:border-primary/50 transition-all cursor-pointer group">
                                                     <Link to={`/article/${article.slug}`} className="w-24 h-24 shrink-0 bg-cover bg-center rounded-md" style={{ backgroundImage: article.thumbnail ? `url(${article.thumbnail})` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}></Link>
                                                     <div className="flex flex-col justify-between py-1">
                                                         <div className="flex flex-col gap-1">
                                                             <span className="text-xs font-semibold text-primary">{article.category?.name || 'Tin tức'}</span>
                                                             <Link to={`/article/${article.slug}`}>
-                                                                <h4 className="text-sm font-bold text-slate-900 dark:text-white leading-snug group-hover:text-primary line-clamp-2">
+                                                                <h4 className="text-sm font-bold text-slate-900 leading-snug group-hover:text-primary line-clamp-2">
                                                                     {article.title}
                                                                 </h4>
                                                             </Link>
@@ -178,8 +178,8 @@ const HomePage = () => {
                                     <div className="lg:col-span-8 flex flex-col gap-8">
                                         {/* Latest News Grid */}
                                         <div>
-                                            <div className="flex items-center justify-between mb-6 border-b border-slate-200 dark:border-[#283039] pb-3">
-                                                <h2 className="text-2xl font-bold text-slate-900 dark:text-white relative">
+                                            <div className="flex items-center justify-between mb-6 border-b border-slate-200 pb-3">
+                                                <h2 className="text-2xl font-bold text-slate-900 relative">
                                                     Tin Mới Nhất
                                                     <span className="absolute bottom-[-13px] left-0 w-full h-[3px] bg-primary rounded-t-full"></span>
                                                 </h2>
@@ -196,12 +196,12 @@ const HomePage = () => {
                                                                 <span className="text-xs text-text-secondary">• {formatDate(article.createdAt)}</span>
                                                             </div>
                                                             <Link to={`/article/${article.slug}`}>
-                                                                <h3 className="text-lg font-bold text-slate-900 dark:text-white leading-tight group-hover:text-primary transition-colors">
+                                                                <h3 className="text-lg font-bold text-slate-900 leading-tight group-hover:text-primary transition-colors">
                                                                     {article.title}
                                                                 </h3>
                                                             </Link>
                                                             {article.excerpt && (
-                                                                <p className="text-slate-600 dark:text-text-secondary text-sm line-clamp-2">
+                                                                <p className="text-slate-600 text-sm line-clamp-2">
                                                                     {article.excerpt}
                                                                 </p>
                                                             )}
@@ -214,22 +214,22 @@ const HomePage = () => {
                                         {/* Remaining Articles */}
                                         {articles.length > 8 && (
                                             <div>
-                                                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 border-l-4 border-primary pl-3">
+                                                <h2 className="text-2xl font-bold text-slate-900 mb-6 border-l-4 border-primary pl-3">
                                                     Bài viết khác
                                                 </h2>
                                                 <div className="flex flex-col gap-4">
                                                     {articles.slice(8).map((article) => (
-                                                        <div key={article._id} className="flex flex-col sm:flex-row gap-4 p-4 rounded-xl bg-white dark:bg-surface-dark shadow-sm border border-slate-100 dark:border-[#283039] hover:shadow-md transition-all group cursor-pointer">
+                                                        <div key={article._id} className="flex flex-col sm:flex-row gap-4 p-4 rounded-xl bg-white shadow-sm border border-slate-100 hover:shadow-md transition-all group cursor-pointer">
                                                             <Link to={`/article/${article.slug}`} className="w-full sm:w-48 aspect-video sm:aspect-[4/3] bg-cover bg-center rounded-lg shrink-0" style={{ backgroundImage: article.thumbnail ? `url(${article.thumbnail})` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}></Link>
                                                             <div className="flex flex-col justify-center gap-2">
                                                                 <span className="text-xs font-bold text-primary">{article.category?.name || 'Tin tức'}</span>
                                                                 <Link to={`/article/${article.slug}`}>
-                                                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">
+                                                                    <h3 className="text-lg font-bold text-slate-900 group-hover:text-primary transition-colors">
                                                                         {article.title}
                                                                     </h3>
                                                                 </Link>
                                                                 {article.excerpt && (
-                                                                    <p className="text-slate-600 dark:text-text-secondary text-sm line-clamp-2">
+                                                                    <p className="text-slate-600 text-sm line-clamp-2">
                                                                         {article.excerpt}
                                                                     </p>
                                                                 )}
@@ -245,19 +245,19 @@ const HomePage = () => {
                                     {/* Right Column: Sidebar */}
                                     <aside className="lg:col-span-4 flex flex-col gap-8">
                                         {/* Most Viewed List */}
-                                        <div className="bg-white dark:bg-surface-dark rounded-xl p-5 border border-slate-100 dark:border-[#283039] shadow-sm">
-                                            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                        <div className="bg-white rounded-xl p-5 border border-slate-100 shadow-sm">
+                                            <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
                                                 <span className="material-symbols-outlined text-orange-500">local_fire_department</span>
                                                 Xem Nhiều Nhất
                                             </h3>
                                             <div className="flex flex-col gap-0">
                                                 {articles.slice(0, 5).map((article, index) => (
-                                                    <Link key={article._id} to={`/article/${article.slug}`} className="group flex gap-4 py-3 border-b border-slate-100 dark:border-[#283039]/50 last:border-0">
-                                                        <span className="text-3xl font-black text-slate-200 dark:text-[#283039] group-hover:text-primary transition-colors w-8 text-center leading-none">
+                                                    <Link key={article._id} to={`/article/${article.slug}`} className="group flex gap-4 py-3 border-b border-slate-100 last:border-0">
+                                                        <span className="text-3xl font-black text-slate-200 group-hover:text-primary transition-colors w-8 text-center leading-none">
                                                             {index + 1}
                                                         </span>
                                                         <div className="flex flex-col gap-1">
-                                                            <h4 className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-primary leading-snug">
+                                                            <h4 className="text-sm font-semibold text-slate-900 group-hover:text-primary leading-snug">
                                                                 {article.title}
                                                             </h4>
                                                         </div>
@@ -267,12 +267,12 @@ const HomePage = () => {
                                         </div>
 
                                         {/* Newsletter Box */}
-                                        <div className="bg-slate-100 dark:bg-[#1e293b] rounded-xl p-6 text-center">
+                                        <div className="bg-slate-100 rounded-xl p-6 text-center">
                                             <span className="material-symbols-outlined text-4xl text-primary mb-3 inline-block">mail</span>
-                                            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Đừng bỏ lỡ tin hay!</h3>
+                                            <h3 className="text-lg font-bold text-slate-900 mb-2">Đừng bỏ lỡ tin hay!</h3>
                                             <p className="text-sm text-text-secondary mb-4">Nhận bản tin tổng hợp mỗi sáng.</p>
                                             <input
-                                                className="w-full mb-3 px-4 py-2 rounded-lg bg-white dark:bg-[#101922] border border-slate-200 dark:border-none text-sm focus:ring-1 focus:ring-primary outline-none"
+                                                className="w-full mb-3 px-4 py-2 rounded-lg bg-white border border-slate-200 text-sm focus:ring-1 focus:ring-primary outline-none"
                                                 placeholder="Email của bạn"
                                                 type="email"
                                             />

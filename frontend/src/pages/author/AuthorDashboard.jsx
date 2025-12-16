@@ -144,7 +144,7 @@ const AuthorDashboard = () => {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-background-light dark:bg-background-dark">
+            <div className="flex items-center justify-center min-h-screen bg-background-light">
                 <div className="text-center">
                     <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                     <p className="mt-4 text-text-secondary">Đang tải dữ liệu...</p>
@@ -154,9 +154,9 @@ const AuthorDashboard = () => {
     }
 
     return (
-        <div className="flex h-screen w-full bg-background-light dark:bg-background-dark font-display">
+        <div className="flex h-screen w-full bg-background-light font-display">
             {/* Sidebar */}
-            <aside className="flex flex-col w-64 bg-white dark:bg-surface-dark border-r border-border-light dark:border-border-dark flex-shrink-0">
+            <aside className="flex flex-col w-64 bg-white border-r border-border-light flex-shrink-0">
                 <div className="flex h-full flex-col justify-between p-4">
                     <div className="flex flex-col gap-4">
                         {/* User Profile */}
@@ -165,7 +165,7 @@ const AuthorDashboard = () => {
                                 <span className="material-symbols-outlined text-[24px]">person</span>
                             </div>
                             <div className="flex flex-col">
-                                <h1 className="text-text-primary dark:text-white text-base font-bold">
+                                <h1 className="text-text-primary text-base font-bold">
                                     {user.username}
                                 </h1>
                                 <p className="text-text-secondary text-xs">Author</p>
@@ -178,7 +178,7 @@ const AuthorDashboard = () => {
                                 onClick={() => setShowForm(false)}
                                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${!showForm
                                     ? 'bg-primary/10 text-primary'
-                                    : 'text-text-primary dark:text-gray-300 hover:bg-surface-light dark:hover:bg-border-dark'
+                                    : 'text-text-primary hover:bg-surface-light'
                                     }`}
                             >
                                 <span className="material-symbols-outlined text-[24px]">book_2</span>
@@ -192,7 +192,7 @@ const AuthorDashboard = () => {
                                 }}
                                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${showForm && !editingArticle
                                     ? 'bg-primary/10 text-primary'
-                                    : 'text-text-primary dark:text-gray-300 hover:bg-surface-light dark:hover:bg-border-dark'
+                                    : 'text-text-primary hover:bg-surface-light'
                                     }`}
                             >
                                 <span className="material-symbols-outlined text-[24px]">edit_square</span>
@@ -200,7 +200,7 @@ const AuthorDashboard = () => {
                             </button>
                             <Link
                                 to="/"
-                                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-primary dark:text-gray-300 hover:bg-surface-light dark:hover:bg-border-dark transition-colors"
+                                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-primary hover:bg-surface-light transition-colors"
                             >
                                 <span className="material-symbols-outlined text-[24px]">home</span>
                                 <span className="text-sm font-medium">Trang chủ</span>
@@ -209,7 +209,7 @@ const AuthorDashboard = () => {
                     </div>
 
                     {/* Logout Button */}
-                    <div className="pt-4 border-t border-border-light dark:border-border-dark">
+                    <div className="pt-4 border-t border-border-light">
                         <Link
                             to="/"
                             className="flex items-center gap-3 px-3 py-2 w-full text-text-secondary hover:text-red-500 transition-colors"
@@ -230,33 +230,33 @@ const AuthorDashboard = () => {
                             <>
                                 {/* Stats Cards */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    <div className="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-surface-dark shadow-sm border border-border-light dark:border-border-dark">
+                                    <div className="flex flex-col gap-2 rounded-xl p-6 bg-white shadow-sm border border-border-light">
                                         <div className="flex items-center gap-2">
                                             <span className="material-symbols-outlined text-primary text-[20px]">bar_chart</span>
                                             <p className="text-text-secondary text-sm font-medium">Tổng lượt xem</p>
                                         </div>
-                                        <p className="text-text-primary dark:text-white text-2xl font-bold">{stats.totalViews.toLocaleString()}</p>
+                                        <p className="text-text-primary text-2xl font-bold">{stats.totalViews.toLocaleString()}</p>
                                     </div>
-                                    <div className="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-surface-dark shadow-sm border border-border-light dark:border-border-dark">
+                                    <div className="flex flex-col gap-2 rounded-xl p-6 bg-white shadow-sm border border-border-light">
                                         <div className="flex items-center gap-2">
                                             <span className="material-symbols-outlined text-primary text-[20px]">check_circle</span>
                                             <p className="text-text-secondary text-sm font-medium">Đã đăng</p>
                                         </div>
-                                        <p className="text-text-primary dark:text-white text-2xl font-bold">{stats.published}</p>
+                                        <p className="text-text-primary text-2xl font-bold">{stats.published}</p>
                                     </div>
-                                    <div className="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-surface-dark shadow-sm border border-border-light dark:border-border-dark">
+                                    <div className="flex flex-col gap-2 rounded-xl p-6 bg-white shadow-sm border border-border-light">
                                         <div className="flex items-center gap-2">
                                             <span className="material-symbols-outlined text-text-secondary text-[20px]">edit_note</span>
                                             <p className="text-text-secondary text-sm font-medium">Bản nháp</p>
                                         </div>
-                                        <p className="text-text-primary dark:text-white text-2xl font-bold">{stats.drafts}</p>
+                                        <p className="text-text-primary text-2xl font-bold">{stats.drafts}</p>
                                     </div>
                                 </div>
 
                                 {/* Articles Table */}
-                                <div className="flex flex-col bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark overflow-hidden">
+                                <div className="flex flex-col bg-white rounded-xl shadow-sm border border-border-light overflow-hidden">
                                     {/* Tabs */}
-                                    <div className="border-b border-border-light dark:border-border-dark px-6">
+                                    <div className="border-b border-border-light px-6">
                                         <div className="flex gap-8 overflow-x-auto">
                                             <button
                                                 onClick={() => setActiveTab('all')}
@@ -308,7 +308,7 @@ const AuthorDashboard = () => {
                                     {/* Table */}
                                     <div className="w-full overflow-x-auto min-h-[400px]">
                                         <table className="w-full min-w-[700px]">
-                                            <thead className="bg-surface-light dark:bg-background-dark border-b border-border-light dark:border-border-dark">
+                                            <thead className="bg-surface-light border-b border-border-light">
                                                 <tr>
                                                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary w-[40%]">Tiêu đề bài viết</th>
                                                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary w-[15%]">Trạng thái</th>
@@ -317,7 +317,7 @@ const AuthorDashboard = () => {
                                                     <th className="px-6 py-4 text-right text-xs font-semibold uppercase text-text-secondary w-[15%]">Hành động</th>
                                                 </tr>
                                             </thead>
-                                            <tbody className="divide-y divide-border-light dark:divide-border-dark">
+                                            <tbody className="divide-y divide-border-light">
                                                 {filteredArticles.length === 0 ? (
                                                     <tr>
                                                         <td colSpan="5" className="px-6 py-8 text-center text-text-secondary">
@@ -326,17 +326,17 @@ const AuthorDashboard = () => {
                                                     </tr>
                                                 ) : (
                                                     filteredArticles.map(article => (
-                                                        <tr key={article._id} className="group hover:bg-surface-light dark:hover:bg-background-dark transition-colors">
+                                                        <tr key={article._id} className="group hover:bg-surface-light transition-colors">
                                                             <td className="px-6 py-4">
                                                                 <div className="flex items-center gap-3">
                                                                     {article.thumbnail && (
                                                                         <div
-                                                                            className="h-10 w-10 rounded bg-gray-200 dark:bg-gray-700 flex-shrink-0 bg-cover bg-center"
+                                                                            className="h-10 w-10 rounded bg-gray-200 flex-shrink-0 bg-cover bg-center"
                                                                             style={{ backgroundImage: `url(${article.thumbnail})` }}
                                                                         ></div>
                                                                     )}
                                                                     <div>
-                                                                        <p className="text-sm font-bold text-text-primary dark:text-white group-hover:text-primary transition-colors">
+                                                                        <p className="text-sm font-bold text-text-primary group-hover:text-primary transition-colors">
                                                                             {article.title}
                                                                         </p>
                                                                         <p className="text-xs text-text-secondary">{article.category?.name}</p>
@@ -344,21 +344,21 @@ const AuthorDashboard = () => {
                                                                 </div>
                                                             </td>
                                                             <td className="px-6 py-4">
-                                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${article.status === 'published' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                                                                    article.status === 'draft' ? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' :
-                                                                        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${article.status === 'published' ? 'bg-green-100 text-green-800' :
+                                                                    article.status === 'draft' ? 'bg-gray-100 text-gray-800' :
+                                                                        'bg-yellow-100 text-yellow-800'
                                                                     }`}>
                                                                     {article.status === 'published' ? 'Đã đăng' :
                                                                         article.status === 'draft' ? 'Bản nháp' : 'Chờ duyệt'}
                                                                 </span>
                                                             </td>
                                                             <td className="px-6 py-4">
-                                                                <p className="text-sm text-text-primary dark:text-gray-300">
+                                                                <p className="text-sm text-text-primary">
                                                                     {new Date(article.createdAt).toLocaleDateString('vi-VN')}
                                                                 </p>
                                                             </td>
                                                             <td className="px-6 py-4">
-                                                                <p className="text-sm font-bold text-text-primary dark:text-white">
+                                                                <p className="text-sm font-bold text-text-primary">
                                                                     {article.views || 0}
                                                                 </p>
                                                             </td>
@@ -368,21 +368,21 @@ const AuthorDashboard = () => {
                                                                         <>
                                                                             <button
                                                                                 onClick={() => handleEdit(article)}
-                                                                                className="text-text-secondary hover:text-primary p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                                className="text-text-secondary hover:text-primary p-2 rounded-full hover:bg-gray-100 transition-colors"
                                                                                 title="Chỉnh sửa"
                                                                             >
                                                                                 <span className="material-symbols-outlined text-[20px]">edit</span>
                                                                             </button>
                                                                             <button
                                                                                 onClick={() => handleSubmitForReview(article._id)}
-                                                                                className="text-text-secondary hover:text-green-500 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                                className="text-text-secondary hover:text-green-500 p-2 rounded-full hover:bg-gray-100 transition-colors"
                                                                                 title="Gửi duyệt"
                                                                             >
                                                                                 <span className="material-symbols-outlined text-[20px]">send</span>
                                                                             </button>
                                                                             <button
                                                                                 onClick={() => handleDelete(article._id)}
-                                                                                className="text-text-secondary hover:text-red-500 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                                className="text-text-secondary hover:text-red-500 p-2 rounded-full hover:bg-gray-100 transition-colors"
                                                                                 title="Xóa"
                                                                             >
                                                                                 <span className="material-symbols-outlined text-[20px]">delete</span>
@@ -392,7 +392,7 @@ const AuthorDashboard = () => {
                                                                     {article.status === 'pending' && (
                                                                         <button
                                                                             onClick={() => navigate(`/article/${article.slug}`)}
-                                                                            className="text-text-secondary hover:text-primary p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                            className="text-text-secondary hover:text-primary p-2 rounded-full hover:bg-gray-100 transition-colors"
                                                                             title="Xem chi tiết"
                                                                         >
                                                                             <span className="material-symbols-outlined text-[20px]">visibility</span>
@@ -402,7 +402,7 @@ const AuthorDashboard = () => {
                                                                         <>
                                                                             <button
                                                                                 onClick={() => navigate(`/article/${article.slug}`)}
-                                                                                className="text-text-secondary hover:text-primary p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                                className="text-text-secondary hover:text-primary p-2 rounded-full hover:bg-gray-100 transition-colors"
                                                                                 title="Xem bài viết"
                                                                             >
                                                                                 <span className="material-symbols-outlined text-[20px]">visibility</span>
@@ -410,7 +410,7 @@ const AuthorDashboard = () => {
                                                                             {!getDeletionRequestForArticle(article._id) && (
                                                                                 <button
                                                                                     onClick={() => handleRequestDeletion(article._id, article.title)}
-                                                                                    className="text-text-secondary hover:text-red-500 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                                    className="text-text-secondary hover:text-red-500 p-2 rounded-full hover:bg-gray-100 transition-colors"
                                                                                     title="Yêu cầu xóa"
                                                                                 >
                                                                                     <span className="material-symbols-outlined text-[20px]">delete</span>
@@ -430,9 +430,9 @@ const AuthorDashboard = () => {
                             </>
                         ) : (
                             /* Create/Edit Form */
-                            <div className="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark p-8">
+                            <div className="bg-white rounded-xl shadow-sm border border-border-light p-8">
                                 <div className="flex justify-between items-center mb-6">
-                                    <h3 className="text-2xl font-bold text-text-primary dark:text-white">
+                                    <h3 className="text-2xl font-bold text-text-primary">
                                         {editingArticle ? 'Chỉnh sửa bài viết' : 'Viết bài mới'}
                                     </h3>
                                     <button
@@ -448,21 +448,21 @@ const AuthorDashboard = () => {
                                 </div>
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div>
-                                        <label className="block text-text-primary dark:text-white text-sm font-medium mb-2">Tiêu đề *</label>
+                                        <label className="block text-text-primary text-sm font-medium mb-2">Tiêu đề *</label>
                                         <input
                                             type="text"
                                             value={formData.title}
                                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                            className="w-full px-4 py-2 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-text-primary dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                            className="w-full px-4 py-2 rounded-lg border border-border-light bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
                                             required
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-text-primary dark:text-white text-sm font-medium mb-2">Chuyên mục *</label>
+                                        <label className="block text-text-primary text-sm font-medium mb-2">Chuyên mục *</label>
                                         <select
                                             value={formData.category}
                                             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                            className="w-full px-4 py-2 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-text-primary dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                            className="w-full px-4 py-2 rounded-lg border border-border-light bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
                                             required
                                         >
                                             <option value="">-- Chọn chuyên mục --</option>
@@ -472,27 +472,27 @@ const AuthorDashboard = () => {
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="block text-text-primary dark:text-white text-sm font-medium mb-2">Tóm tắt</label>
+                                        <label className="block text-text-primary text-sm font-medium mb-2">Tóm tắt</label>
                                         <textarea
                                             value={formData.excerpt}
                                             onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                                            className="w-full px-4 py-2 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-text-primary dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[80px]"
+                                            className="w-full px-4 py-2 rounded-lg border border-border-light bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[80px]"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-text-primary dark:text-white text-sm font-medium mb-2">Nội dung *</label>
+                                        <label className="block text-text-primary text-sm font-medium mb-2">Nội dung *</label>
                                         <RichTextEditor
                                             value={formData.content}
                                             onChange={(value) => setFormData({ ...formData, content: value })}
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-text-primary dark:text-white text-sm font-medium mb-2">URL hình ảnh</label>
+                                        <label className="block text-text-primary text-sm font-medium mb-2">URL hình ảnh</label>
                                         <input
                                             type="text"
                                             value={formData.thumbnail}
                                             onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
-                                            className="w-full px-4 py-2 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-text-primary dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                            className="w-full px-4 py-2 rounded-lg border border-border-light bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
                                             placeholder="https://example.com/image.jpg"
                                         />
                                     </div>
@@ -504,7 +504,7 @@ const AuthorDashboard = () => {
                                                 setEditingArticle(null);
                                                 setFormData({ title: '', content: '', excerpt: '', thumbnail: '', category: '' });
                                             }}
-                                            className="px-5 py-2 rounded-lg border border-border-light dark:border-border-dark text-text-primary dark:text-white hover:bg-surface-light dark:hover:bg-border-dark transition-colors"
+                                            className="px-5 py-2 rounded-lg border border-border-light text-text-primary hover:bg-surface-light transition-colors"
                                         >
                                             Hủy
                                         </button>
@@ -526,20 +526,20 @@ const AuthorDashboard = () => {
             {
                 deletionModal.show && (
                     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                        <div className="bg-white dark:bg-surface-dark rounded-xl p-6 min-w-[500px] max-w-[600px] shadow-xl">
-                            <h3 className="text-text-primary dark:text-white text-xl font-bold mb-4">Yêu cầu xóa bài viết</h3>
+                        <div className="bg-white rounded-xl p-6 min-w-[500px] max-w-[600px] shadow-xl">
+                            <h3 className="text-text-primary text-xl font-bold mb-4">Yêu cầu xóa bài viết</h3>
                             <p className="text-text-secondary mb-4">
                                 Bài viết: <strong>{deletionModal.articleTitle}</strong>
                             </p>
                             <div className="mb-4">
-                                <label className="block text-text-primary dark:text-white text-sm font-medium mb-2">
+                                <label className="block text-text-primary text-sm font-medium mb-2">
                                     Lý do xóa bài viết: <span className="text-red-500">*</span>
                                 </label>
                                 <textarea
                                     value={deletionReason}
                                     onChange={(e) => setDeletionReason(e.target.value)}
                                     placeholder="Nhập lý do tại sao bạn muốn xóa bài viết này (ít nhất 10 ký tự)..."
-                                    className="w-full px-4 py-2 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-text-primary dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[120px]"
+                                    className="w-full px-4 py-2 rounded-lg border border-border-light bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[120px]"
                                 />
                                 <small className="text-text-secondary">{deletionReason.length}/500 ký tự</small>
                             </div>
@@ -549,7 +549,7 @@ const AuthorDashboard = () => {
                                         setDeletionModal({ show: false, articleId: null, articleTitle: '' });
                                         setDeletionReason('');
                                     }}
-                                    className="px-4 py-2 bg-surface-light dark:bg-border-dark text-text-primary dark:text-white rounded-lg hover:bg-border-light dark:hover:bg-border-dark transition-colors"
+                                    className="px-4 py-2 bg-surface-light text-text-primary rounded-lg hover:bg-border-light transition-colors"
                                 >
                                     Hủy
                                 </button>
