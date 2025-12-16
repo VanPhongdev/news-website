@@ -4,7 +4,8 @@ const {
     getCommentsByArticle,
     createComment,
     updateComment,
-    deleteComment
+    deleteComment,
+    toggleLike
 } = require('../controllers/comment.controller');
 const { protect } = require('../middleware/auth.middleware');
 const { canComment } = require('../middleware/role.middleware');
@@ -20,5 +21,8 @@ router.route('/')
 router.route('/:id')
     .put(protect, updateComment)
     .delete(protect, deleteComment);
+
+// Route for liking a comment
+router.post('/:id/like', protect, toggleLike);
 
 module.exports = router;

@@ -17,6 +17,15 @@ const commentSchema = new mongoose.Schema({
         ref: 'User',
         required: [true, 'Comment must have an author']
     },
+    parent: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment',
+        default: null
+    },
+    likes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
     createdAt: {
         type: Date,
         default: Date.now
