@@ -15,6 +15,7 @@ const AdminDashboard = () => {
     const [deletionStatusFilter, setDeletionStatusFilter] = useState('pending');
     const [articleAuthorFilter, setArticleAuthorFilter] = useState('all');
     const [articleCategoryFilter, setArticleCategoryFilter] = useState('all');
+    const [articleSortBy, setArticleSortBy] = useState('newest');
     const [roleChangeModal, setRoleChangeModal] = useState({ show: false, userId: null, currentRole: '' });
     const [selectedRole, setSelectedRole] = useState('');
 
@@ -476,6 +477,16 @@ const AdminDashboard = () => {
                                                     </option>
                                                 ))}
                                             </select>
+                                            <select
+                                                value={articleSortBy}
+                                                onChange={(e) => setArticleSortBy(e.target.value)}
+                                                className="px-3 py-2 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-text-primary dark:text-white text-sm"
+                                            >
+                                                <option value="newest">Mới nhất</option>
+                                                <option value="oldest">Cũ nhất</option>
+                                                <option value="most-viewed">Lượt xem: Cao → Thấp</option>
+                                                <option value="least-viewed">Lượt xem: Thấp → Cao</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -497,6 +508,20 @@ const AdminDashboard = () => {
                                                     if (articleAuthorFilter !== 'all' && article.author?._id !== articleAuthorFilter) return false;
                                                     if (articleCategoryFilter !== 'all' && article.category?._id !== articleCategoryFilter) return false;
                                                     return true;
+                                                })
+                                                .sort((a, b) => {
+                                                    switch (articleSortBy) {
+                                                        case 'newest':
+                                                            return new Date(b.createdAt) - new Date(a.createdAt);
+                                                        case 'oldest':
+                                                            return new Date(a.createdAt) - new Date(b.createdAt);
+                                                        case 'most-viewed':
+                                                            return (b.views || 0) - (a.views || 0);
+                                                        case 'least-viewed':
+                                                            return (a.views || 0) - (b.views || 0);
+                                                        default:
+                                                            return 0;
+                                                    }
                                                 })
                                                 .map(article => (
                                                     <tr key={article._id} className="hover:bg-surface-light dark:hover:bg-background-dark transition-colors">
