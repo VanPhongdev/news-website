@@ -12,7 +12,7 @@ Website tin tức/báo chí với hệ thống phân quyền 4 vai trò (Admin, 
 
 ### Chức năng chính
 - Quản lý bài viết (CRUD, draft, pending, published)
-- Hệ thống bình luận nested (không giới hạn độ sâu)
+- Tự động lấy tin tức từ VnExpress
 - Like/Unlike bài viết và bình luận
 - Yêu cầu xóa bài viết đã đăng
 - Tìm kiếm theo bài báo
@@ -105,7 +105,25 @@ npm run dev
 ```
 Frontend chạy tại: http://localhost:3000
 
-## 📁 Cấu trúc thư mục
+### 7. Lấy tin tức từ RSS (Tùy chọn)
+
+Để tự động lấy tin tức từ VnExpress:
+
+```bash
+cd backend
+npm run fetch-news
+```
+
+**Tính năng:**
+- Lấy tin từ 9 chuyên mục của VnExpress
+- Tự động map với categories trong database
+- Random phân bổ cho các tác giả
+- Kiểm tra trùng lặp theo tiêu đề
+- Mục tiêu: 5 bài mới mỗi chuyên mục (tối đa kiểm tra 20 bài)
+
+**Lưu ý:** Chạy script này khi cần cập nhật tin tức mới
+
+## Cấu trúc thư mục
 
 ```
 news-website/
