@@ -12,6 +12,9 @@ const ArticleDetail = () => {
     const [error, setError] = useState('');
 
     useEffect(() => {
+        // Scroll to top when article changes
+        window.scrollTo(0, 0);
+
         let isMounted = true;
 
         const fetchArticle = async () => {

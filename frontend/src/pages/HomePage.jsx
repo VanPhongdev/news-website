@@ -19,6 +19,8 @@ const HomePage = () => {
 
     useEffect(() => {
         fetchArticles();
+        // Scroll to top when category or search changes
+        window.scrollTo(0, 0);
     }, [currentPage, searchTerm, selectedCategory]);
 
     const fetchCategories = async () => {

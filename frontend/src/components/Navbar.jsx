@@ -43,10 +43,10 @@ const Navbar = () => {
     };
 
     const calculateVisibleCategories = () => {
-        // On large screens, show first 5 categories, rest in dropdown
+        // On large screens, show first 7 categories, rest in dropdown
         // On medium screens, show first 3 categories
         const screenWidth = window.innerWidth;
-        let maxVisible = 5;
+        let maxVisible = 7;
 
         if (screenWidth < 1280) {
             maxVisible = 3;
