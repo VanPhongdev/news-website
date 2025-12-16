@@ -32,7 +32,7 @@ const AuthorDashboard = () => {
     const fetchData = async () => {
         try {
             const [articlesRes, categoriesRes, deletionRequestsRes] = await Promise.all([
-                articleAPI.getArticles({ author: user._id }),
+                articleAPI.getArticles({ author: user._id, limit: 1000 }),
                 categoryAPI.getCategories(),
                 deletionRequestAPI.getMyRequests()
             ]);
