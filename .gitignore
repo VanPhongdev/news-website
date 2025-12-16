@@ -62,3 +62,8 @@ uploads/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+
+# Database
+/database/*
+*.bson
+*.zip
