@@ -317,7 +317,10 @@ const AdminDashboard = () => {
                                                             <div className={`w-2 h-2 rounded-full ${status === 'published' ? 'bg-green-500' :
                                                                 status === 'draft' ? 'bg-yellow-500' : 'bg-orange-500'
                                                                 }`}></div>
-                                                            <span className="text-sm text-text-primary dark:text-white capitalize">{status}</span>
+                                                            <span className="text-sm text-text-primary dark:text-white">
+                                                                {status === 'published' ? 'Đã đăng' :
+                                                                    status === 'draft' ? 'Bản nháp' : 'Chờ duyệt'}
+                                                            </span>
                                                         </div>
                                                         <div className="flex items-center gap-2">
                                                             <span className="text-sm font-bold text-text-secondary">{count}</span>
@@ -468,7 +471,10 @@ const AdminDashboard = () => {
                                                             article.status === 'draft' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
                                                                 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
                                                             }`}>
-                                                            {article.status}
+                                                            {article.status === 'published' ? 'Đã đăng' :
+                                                                article.status === 'draft' ? 'Bản nháp' :
+                                                                    article.status === 'pending' ? 'Chờ duyệt' :
+                                                                        article.status === 'approved' ? 'Đã duyệt' : 'Từ chối'}
                                                         </span>
                                                     </td>
                                                     <td className="px-6 py-4 text-text-secondary text-sm">{article.views || 0}</td>
@@ -504,17 +510,17 @@ const AdminDashboard = () => {
                                         <option value="rejected">Đã từ chối ({deletionRequests.filter(r => r.status === 'rejected').length})</option>
                                     </select>
                                 </div>
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-left border-collapse">
-                                        <thead>
-                                            <tr className="bg-surface-light dark:bg-background-dark">
-                                                <th className="px-6 py-3 text-text-secondary text-xs font-bold uppercase">Bài viết</th>
-                                                <th className="px-6 py-3 text-text-secondary text-xs font-bold uppercase">Tác giả</th>
-                                                <th className="px-6 py-3 text-text-secondary text-xs font-bold uppercase">Lý do</th>
-                                                <th className="px-6 py-3 text-text-secondary text-xs font-bold uppercase">Ngày yêu cầu</th>
-                                                <th className="px-6 py-3 text-text-secondary text-xs font-bold uppercase">Trạng thái</th>
-                                                <th className="px-6 py-3 text-text-secondary text-xs font-bold uppercase">Người duyệt</th>
-                                                <th className="px-6 py-3 text-text-secondary text-xs font-bold uppercase text-right">Hành động</th>
+                                <div className="w-full overflow-x-auto">
+                                    <table className="w-full min-w-[900px]">
+                                        <thead className="bg-surface-light dark:bg-background-dark border-b border-border-light dark:border-border-dark">
+                                            <tr>
+                                                <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary w-[20%]">Bài viết</th>
+                                                <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary w-[12%]">Tác giả</th>
+                                                <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary w-[25%]">Lý do</th>
+                                                <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary w-[12%]">Ngày yêu cầu</th>
+                                                <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary w-[10%]">Trạng thái</th>
+                                                <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary w-[12%]">Người duyệt</th>
+                                                <th className="px-6 py-4 text-right text-xs font-semibold uppercase text-text-secondary w-[9%]">Hành động</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-border-light dark:divide-border-dark">
@@ -522,42 +528,54 @@ const AdminDashboard = () => {
                                                 .filter(req => deletionStatusFilter === 'all' || req.status === deletionStatusFilter)
                                                 .map(request => (
                                                     <tr key={request._id} className="hover:bg-surface-light dark:hover:bg-background-dark transition-colors">
-                                                        <td className="px-6 py-4 text-text-primary dark:text-white text-sm font-medium max-w-xs truncate">
-                                                            {request.article?.title || '[Đã xóa]'}
-                                                        </td>
-                                                        <td className="px-6 py-4 text-text-secondary text-sm">{request.author?.username}</td>
-                                                        <td className="px-6 py-4 text-text-secondary text-sm max-w-xs truncate">{request.reason}</td>
-                                                        <td className="px-6 py-4 text-text-secondary text-sm">{new Date(request.createdAt).toLocaleDateString('vi-VN')}</td>
                                                         <td className="px-6 py-4">
-                                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${request.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                                                            <p className="text-sm font-bold text-text-primary dark:text-white">
+                                                                {request.article?.title || '[Đã xóa]'}
+                                                            </p>
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            <p className="text-sm text-text-primary dark:text-gray-300">{request.author?.username}</p>
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            <p className="text-sm text-text-secondary line-clamp-2">{request.reason}</p>
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            <p className="text-sm text-text-primary dark:text-gray-300">
+                                                                {new Date(request.createdAt).toLocaleDateString('vi-VN')}
+                                                            </p>
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${request.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
                                                                 request.status === 'approved' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
                                                                     'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
                                                                 }`}>
-                                                                {request.status}
+                                                                {request.status === 'pending' ? 'Chờ duyệt' :
+                                                                    request.status === 'approved' ? 'Đã duyệt' : 'Từ chối'}
                                                             </span>
                                                         </td>
-                                                        <td className="px-6 py-4 text-text-secondary text-sm">
-                                                            {request.reviewedBy?.username || '-'}
-                                                            {request.reviewedAt && <><br /><small>{new Date(request.reviewedAt).toLocaleDateString('vi-VN')}</small></>}
+                                                        <td className="px-6 py-4">
+                                                            <p className="text-sm text-text-primary dark:text-gray-300">
+                                                                {request.reviewedBy?.username || '-'}
+                                                            </p>
                                                         </td>
                                                         <td className="px-6 py-4 text-right">
-                                                            {request.status === 'pending' ? (
-                                                                <>
+                                                            {request.status === 'pending' && (
+                                                                <div className="flex items-center justify-end gap-1">
                                                                     <button
                                                                         onClick={() => handleApproveDeletion(request._id)}
-                                                                        className="mr-2 px-3 py-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded text-xs font-medium hover:bg-green-200 dark:hover:bg-green-800 transition-colors"
+                                                                        className="text-text-secondary hover:text-green-500 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                        title="Duyệt"
                                                                     >
-                                                                        ✓ Duyệt
+                                                                        <span className="material-symbols-outlined text-[20px]">check_circle</span>
                                                                     </button>
                                                                     <button
                                                                         onClick={() => handleRejectDeletion(request._id)}
-                                                                        className="px-3 py-1 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 rounded text-xs font-medium hover:bg-red-200 dark:hover:bg-red-800 transition-colors"
+                                                                        className="text-text-secondary hover:text-red-500 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                        title="Từ chối"
                                                                     >
-                                                                        ✗ Từ chối
+                                                                        <span className="material-symbols-outlined text-[20px]">cancel</span>
                                                                     </button>
-                                                                </>
-                                                            ) : (
-                                                                <span className="text-text-secondary text-sm">-</span>
+                                                                </div>
                                                             )}
                                                         </td>
                                                     </tr>
