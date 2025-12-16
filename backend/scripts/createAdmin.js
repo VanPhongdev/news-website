@@ -22,7 +22,7 @@ const createAdminUser = async () => {
         // Create admin user
         const adminData = {
             username: process.env.ADMIN_USERNAME || 'admin',
-            email: process.env.ADMIN_EMAIL || 'admin@example.com',
+            email: process.env.ADMIN_EMAIL || 'admin@tintuc24h.com',
             password: process.env.ADMIN_PASSWORD || '123456',
             role: 'admin'
         };
