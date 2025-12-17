@@ -7,24 +7,6 @@ html {
   overflow-y: scroll;
 }
 
-/* Custom scrollbar for dark mode */
-.dark ::-webkit-scrollbar {
-  width: 8px;
-}
-
-.dark ::-webkit-scrollbar-track {
-  background: #0f172a;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 4px;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
-}
-
 /* Minimal styles for Quill editor */
 .ql-container {
   min-height: 500px;

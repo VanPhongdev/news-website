@@ -92,7 +92,7 @@ const Navbar = () => {
     };
 
     return (
-        <header className="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-border-light dark:border-border-dark bg-white dark:bg-background-dark backdrop-blur px-4 lg:px-10 py-3 shadow-sm">
+        <header className="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-border-light bg-white backdrop-blur px-4 lg:px-10 py-3 shadow-sm">
             <div className="flex items-center gap-4">
                 {/* Logo */}
                 <Link to="/" onClick={handleLogoClick} className="flex items-center gap-3 shrink-0">
@@ -101,7 +101,7 @@ const Navbar = () => {
                             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm0 2v12h16V6H4zm2 2h8v6H6V8zm2 2v2h4v-2H8zm-2 6h12v2H6v-2zm10-6h2v2h-2v-2zm0 4h2v2h-2v-2z" />
                         </svg>
                     </div>
-                    <h2 className="text-text-primary dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">
+                    <h2 className="text-text-primary text-xl font-bold leading-tight tracking-[-0.015em]">
                         TinTức<span className="text-primary">24h</span>
                     </h2>
                 </Link>
@@ -146,7 +146,7 @@ const Navbar = () => {
                                         className="fixed inset-0 z-40"
                                         onClick={() => setShowDropdown(false)}
                                     ></div>
-                                    <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg shadow-lg py-2 z-50">
+                                    <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-border-light rounded-lg shadow-lg py-2 z-50">
                                         {dropdownCategories.map((category) => (
                                             <Link
                                                 key={category._id}
@@ -154,7 +154,7 @@ const Navbar = () => {
                                                 onClick={() => setShowDropdown(false)}
                                                 className={`block px-4 py-2 text-sm transition-colors ${selectedCategory === category.slug
                                                     ? 'bg-primary text-white'
-                                                    : 'text-text-secondary hover:bg-surface-light dark:hover:bg-surface-dark'
+                                                    : 'text-text-secondary hover:bg-surface-light'
                                                     }`}
                                             >
                                                 {category.name}
@@ -171,12 +171,12 @@ const Navbar = () => {
             {/* Right Side - Search and Auth */}
             <div className="flex items-center gap-4">
                 <label className="hidden md:flex flex-col min-w-40 !h-10 max-w-64">
-                    <div className="flex w-full flex-1 items-stretch rounded-lg h-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark focus-within:ring-2 focus-within:ring-primary/50 transition-all">
+                    <div className="flex w-full flex-1 items-stretch rounded-lg h-full bg-surface-light border border-border-light focus-within:ring-2 focus-within:ring-primary/50 transition-all">
                         <div className="text-text-secondary flex items-center justify-center pl-4 pr-2">
                             <span className="material-symbols-outlined text-[20px]">search</span>
                         </div>
                         <input
-                            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg bg-transparent text-text-primary dark:text-white focus:outline-0 focus:ring-0 border-none h-full placeholder:text-text-secondary px-0 text-sm font-normal leading-normal"
+                            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg bg-transparent text-text-primary focus:outline-0 focus:ring-0 border-none h-full placeholder:text-text-secondary px-0 text-sm font-normal leading-normal"
                             placeholder="Tìm kiếm tin tức..."
                             value={searchTerm}
                             onChange={handleSearchChange}
@@ -209,7 +209,7 @@ const Navbar = () => {
                         <span className="text-text-secondary text-sm">Xin chào, {user.username}</span>
                         <button
                             onClick={handleLogout}
-                            className="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-surface-light dark:bg-surface-dark hover:bg-border-light dark:hover:bg-border-dark transition-colors text-text-primary dark:text-white text-sm font-medium"
+                            className="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-surface-light hover:bg-border-light transition-colors text-text-primary text-sm font-medium"
                         >
                             Đăng xuất
                         </button>

@@ -111,7 +111,7 @@ const EditorDashboard = () => {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-background-light dark:bg-background-dark">
+            <div className="flex items-center justify-center min-h-screen bg-background-light">
                 <div className="text-center">
                     <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                     <p className="mt-4 text-text-secondary">Đang tải dữ liệu...</p>
@@ -121,9 +121,9 @@ const EditorDashboard = () => {
     }
 
     return (
-        <div className="flex h-screen w-full bg-background-light dark:bg-background-dark font-display">
+        <div className="flex h-screen w-full bg-background-light font-display">
             {/* Sidebar */}
-            <aside className="flex flex-col w-64 bg-white dark:bg-surface-dark border-r border-border-light dark:border-border-dark flex-shrink-0">
+            <aside className="flex flex-col w-64 bg-white border-r border-border-light flex-shrink-0">
                 <div className="flex h-full flex-col justify-between p-4">
                     <div className="flex flex-col gap-4">
                         {/* User Profile */}
@@ -132,7 +132,7 @@ const EditorDashboard = () => {
                                 <span className="material-symbols-outlined text-[24px]">person</span>
                             </div>
                             <div className="flex flex-col">
-                                <h1 className="text-text-primary dark:text-white text-base font-bold">
+                                <h1 className="text-text-primary text-base font-bold">
                                     {user.username}
                                 </h1>
                                 <p className="text-text-secondary text-xs">Editor</p>
@@ -145,7 +145,7 @@ const EditorDashboard = () => {
                                 onClick={() => setActiveTab('pending')}
                                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${activeTab === 'pending'
                                     ? 'bg-primary/10 text-primary'
-                                    : 'text-text-primary dark:text-gray-300 hover:bg-surface-light dark:hover:bg-border-dark'
+                                    : 'text-text-primary hover:bg-surface-light'
                                     }`}
                             >
                                 <span className="material-symbols-outlined text-[24px]">pending_actions</span>
@@ -155,7 +155,7 @@ const EditorDashboard = () => {
                                 onClick={() => setActiveTab('approved')}
                                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${activeTab === 'approved'
                                     ? 'bg-primary/10 text-primary'
-                                    : 'text-text-primary dark:text-gray-300 hover:bg-surface-light dark:hover:bg-border-dark'
+                                    : 'text-text-primary hover:bg-surface-light'
                                     }`}
                             >
                                 <span className="material-symbols-outlined text-[24px]">check_circle</span>
@@ -165,7 +165,7 @@ const EditorDashboard = () => {
                                 onClick={() => setActiveTab('published')}
                                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${activeTab === 'published'
                                     ? 'bg-primary/10 text-primary'
-                                    : 'text-text-primary dark:text-gray-300 hover:bg-surface-light dark:hover:bg-border-dark'
+                                    : 'text-text-primary hover:bg-surface-light'
                                     }`}
                             >
                                 <span className="material-symbols-outlined text-[24px]">article</span>
@@ -175,7 +175,7 @@ const EditorDashboard = () => {
                                 onClick={() => setActiveTab('categories')}
                                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${activeTab === 'categories'
                                     ? 'bg-primary/10 text-primary'
-                                    : 'text-text-primary dark:text-gray-300 hover:bg-surface-light dark:hover:bg-border-dark'
+                                    : 'text-text-primary hover:bg-surface-light'
                                     }`}
                             >
                                 <span className="material-symbols-outlined text-[24px]">category</span>
@@ -185,7 +185,7 @@ const EditorDashboard = () => {
                                 onClick={() => setActiveTab('deletions')}
                                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${activeTab === 'deletions'
                                     ? 'bg-primary/10 text-primary'
-                                    : 'text-text-primary dark:text-gray-300 hover:bg-surface-light dark:hover:bg-border-dark'
+                                    : 'text-text-primary hover:bg-surface-light'
                                     }`}
                             >
                                 <span className="material-symbols-outlined text-[24px]">delete_sweep</span>
@@ -193,7 +193,7 @@ const EditorDashboard = () => {
                             </button>
                             <Link
                                 to="/"
-                                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-primary dark:text-gray-300 hover:bg-surface-light dark:hover:bg-border-dark transition-colors"
+                                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-primary hover:bg-surface-light transition-colors"
                             >
                                 <span className="material-symbols-outlined text-[24px]">home</span>
                                 <span className="text-sm font-medium">Trang chủ</span>
@@ -202,7 +202,7 @@ const EditorDashboard = () => {
                     </div>
 
                     {/* Logout Button */}
-                    <div className="pt-4 border-t border-border-light dark:border-border-dark">
+                    <div className="pt-4 border-t border-border-light">
                         <Link
                             to="/"
                             className="flex items-center gap-3 px-3 py-2 w-full text-text-secondary hover:text-red-500 transition-colors"
@@ -222,43 +222,43 @@ const EditorDashboard = () => {
 
                         {/* Stats Cards */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div className="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-surface-dark shadow-sm border border-border-light dark:border-border-dark">
+                            <div className="flex flex-col gap-2 rounded-xl p-6 bg-white shadow-sm border border-border-light">
                                 <div className="flex items-center gap-2">
                                     <span className="material-symbols-outlined text-yellow-500 text-[20px]">pending_actions</span>
                                     <p className="text-text-secondary text-sm font-medium">Chờ duyệt</p>
                                 </div>
-                                <p className="text-text-primary dark:text-white text-2xl font-bold">{stats.pending}</p>
+                                <p className="text-text-primary text-2xl font-bold">{stats.pending}</p>
                             </div>
-                            <div className="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-surface-dark shadow-sm border border-border-light dark:border-border-dark">
+                            <div className="flex flex-col gap-2 rounded-xl p-6 bg-white shadow-sm border border-border-light">
                                 <div className="flex items-center gap-2">
                                     <span className="material-symbols-outlined text-green-500 text-[20px]">check_circle</span>
                                     <p className="text-text-secondary text-sm font-medium">Đã duyệt</p>
                                 </div>
-                                <p className="text-text-primary dark:text-white text-2xl font-bold">{stats.approved}</p>
+                                <p className="text-text-primary text-2xl font-bold">{stats.approved}</p>
                             </div>
-                            <div className="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-surface-dark shadow-sm border border-border-light dark:border-border-dark">
+                            <div className="flex flex-col gap-2 rounded-xl p-6 bg-white shadow-sm border border-border-light">
                                 <div className="flex items-center gap-2">
                                     <span className="material-symbols-outlined text-primary text-[20px]">article</span>
                                     <p className="text-text-secondary text-sm font-medium">Đã đăng</p>
                                 </div>
-                                <p className="text-text-primary dark:text-white text-2xl font-bold">{stats.published}</p>
+                                <p className="text-text-primary text-2xl font-bold">{stats.published}</p>
                             </div>
-                            <div className="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-surface-dark shadow-sm border border-border-light dark:border-border-dark">
+                            <div className="flex flex-col gap-2 rounded-xl p-6 bg-white shadow-sm border border-border-light">
                                 <div className="flex items-center gap-2">
                                     <span className="material-symbols-outlined text-red-500 text-[20px]">delete_sweep</span>
                                     <p className="text-text-secondary text-sm font-medium">Yêu cầu xóa</p>
                                 </div>
-                                <p className="text-text-primary dark:text-white text-2xl font-bold">{stats.pendingDeletions}</p>
+                                <p className="text-text-primary text-2xl font-bold">{stats.pendingDeletions}</p>
                             </div>
                         </div>
 
                         {/* Content Area */}
                         {(activeTab === 'pending' || activeTab === 'approved' || activeTab === 'published') && (
-                            <div className="flex flex-col bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark overflow-hidden">
+                            <div className="flex flex-col bg-white rounded-xl shadow-sm border border-border-light overflow-hidden">
                                 {/* Table */}
                                 <div className="w-full overflow-x-auto">
                                     <table className="w-full min-w-[700px]">
-                                        <thead className="bg-surface-light dark:bg-background-dark border-b border-border-light dark:border-border-dark">
+                                        <thead className="bg-surface-light border-b border-border-light">
                                             <tr>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary w-[35%]">Tiêu đề bài viết</th>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary w-[15%]">Tác giả</th>
@@ -267,7 +267,7 @@ const EditorDashboard = () => {
                                                 <th className="px-6 py-4 text-right text-xs font-semibold uppercase text-text-secondary w-[20%]">Hành động</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="divide-y divide-border-light dark:divide-border-dark">
+                                        <tbody className="divide-y divide-border-light">
                                             {filteredArticles.length === 0 ? (
                                                 <tr>
                                                     <td colSpan="5" className="px-6 py-8 text-center text-text-secondary">
@@ -276,17 +276,17 @@ const EditorDashboard = () => {
                                                 </tr>
                                             ) : (
                                                 filteredArticles.map(article => (
-                                                    <tr key={article._id} className="group hover:bg-surface-light dark:hover:bg-background-dark transition-colors">
+                                                    <tr key={article._id} className="group hover:bg-surface-light transition-colors">
                                                         <td className="px-6 py-4">
                                                             <div className="flex items-center gap-3">
                                                                 {article.thumbnail && (
                                                                     <div
-                                                                        className="h-10 w-10 rounded bg-gray-200 dark:bg-gray-700 flex-shrink-0 bg-cover bg-center"
+                                                                        className="h-10 w-10 rounded bg-gray-200 flex-shrink-0 bg-cover bg-center"
                                                                         style={{ backgroundImage: `url(${article.thumbnail})` }}
                                                                     ></div>
                                                                 )}
                                                                 <div>
-                                                                    <p className="text-sm font-bold text-text-primary dark:text-white group-hover:text-primary transition-colors">
+                                                                    <p className="text-sm font-bold text-text-primary group-hover:text-primary transition-colors">
                                                                         {article.title}
                                                                     </p>
                                                                     {article.excerpt && (
@@ -296,15 +296,15 @@ const EditorDashboard = () => {
                                                             </div>
                                                         </td>
                                                         <td className="px-6 py-4">
-                                                            <p className="text-sm text-text-primary dark:text-gray-300">{article.author?.username}</p>
+                                                            <p className="text-sm text-text-primary">{article.author?.username}</p>
                                                         </td>
                                                         <td className="px-6 py-4">
-                                                            <p className="text-sm text-text-primary dark:text-gray-300">{article.category?.name}</p>
+                                                            <p className="text-sm text-text-primary">{article.category?.name}</p>
                                                         </td>
                                                         <td className="px-6 py-4">
-                                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${article.status === 'published' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                                                                article.status === 'approved' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
-                                                                    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${article.status === 'published' ? 'bg-green-100 text-green-800' :
+                                                                article.status === 'approved' ? 'bg-blue-100 text-blue-800' :
+                                                                    'bg-yellow-100 text-yellow-800'
                                                                 }`}>
                                                                 {article.status === 'published' ? 'Đã đăng' :
                                                                     article.status === 'approved' ? 'Đã duyệt' : 'Chờ duyệt'}
@@ -314,7 +314,7 @@ const EditorDashboard = () => {
                                                             <div className="flex items-center justify-end gap-1">
                                                                 <button
                                                                     onClick={() => navigate(`/article/${article.slug}`)}
-                                                                    className="text-text-secondary hover:text-primary p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                    className="text-text-secondary hover:text-primary p-2 rounded-full hover:bg-gray-100 transition-colors"
                                                                     title="Xem chi tiết"
                                                                 >
                                                                     <span className="material-symbols-outlined text-[20px]">visibility</span>
@@ -323,14 +323,14 @@ const EditorDashboard = () => {
                                                                     <>
                                                                         <button
                                                                             onClick={() => handleStatusChange(article._id, 'approved')}
-                                                                            className="text-text-secondary hover:text-green-500 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                            className="text-text-secondary hover:text-green-500 p-2 rounded-full hover:bg-gray-100 transition-colors"
                                                                             title="Duyệt bài"
                                                                         >
                                                                             <span className="material-symbols-outlined text-[20px]">check_circle</span>
                                                                         </button>
                                                                         <button
                                                                             onClick={() => handleStatusChange(article._id, 'rejected')}
-                                                                            className="text-text-secondary hover:text-red-500 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                            className="text-text-secondary hover:text-red-500 p-2 rounded-full hover:bg-gray-100 transition-colors"
                                                                             title="Từ chối"
                                                                         >
                                                                             <span className="material-symbols-outlined text-[20px]">cancel</span>
@@ -340,7 +340,7 @@ const EditorDashboard = () => {
                                                                 {article.status === 'approved' && (
                                                                     <button
                                                                         onClick={() => handlePublish(article._id)}
-                                                                        className="text-text-secondary hover:text-primary p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                        className="text-text-secondary hover:text-primary p-2 rounded-full hover:bg-gray-100 transition-colors"
                                                                         title="Đăng bài"
                                                                     >
                                                                         <span className="material-symbols-outlined text-[20px]">publish</span>
@@ -370,25 +370,25 @@ const EditorDashboard = () => {
                                         <span>Tạo chuyên mục mới</span>
                                     </button>
                                 ) : (
-                                    <div className="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark p-6">
-                                        <h3 className="text-lg font-bold text-text-primary dark:text-white mb-4">Tạo chuyên mục mới</h3>
+                                    <div className="bg-white rounded-xl shadow-sm border border-border-light p-6">
+                                        <h3 className="text-lg font-bold text-text-primary mb-4">Tạo chuyên mục mới</h3>
                                         <form onSubmit={handleCreateCategory} className="space-y-4">
                                             <div>
-                                                <label className="block text-text-primary dark:text-white text-sm font-medium mb-2">Tên chuyên mục *</label>
+                                                <label className="block text-text-primary text-sm font-medium mb-2">Tên chuyên mục *</label>
                                                 <input
                                                     type="text"
                                                     value={newCategory.name}
                                                     onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
-                                                    className="w-full px-4 py-2 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-text-primary dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                                    className="w-full px-4 py-2 rounded-lg border border-border-light bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
                                                     required
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-text-primary dark:text-white text-sm font-medium mb-2">Mô tả</label>
+                                                <label className="block text-text-primary text-sm font-medium mb-2">Mô tả</label>
                                                 <textarea
                                                     value={newCategory.description}
                                                     onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
-                                                    className="w-full px-4 py-2 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-text-primary dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[80px]"
+                                                    className="w-full px-4 py-2 rounded-lg border border-border-light bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[80px]"
                                                 />
                                             </div>
                                             <div className="flex gap-3">
@@ -404,7 +404,7 @@ const EditorDashboard = () => {
                                                         setShowCategoryForm(false);
                                                         setNewCategory({ name: '', description: '' });
                                                     }}
-                                                    className="px-5 py-2 border border-border-light dark:border-border-dark text-text-primary dark:text-white rounded-lg hover:bg-surface-light dark:hover:bg-border-dark transition-colors"
+                                                    className="px-5 py-2 border border-border-light text-text-primary rounded-lg hover:bg-surface-light transition-colors"
                                                 >
                                                     Hủy
                                                 </button>
@@ -414,10 +414,10 @@ const EditorDashboard = () => {
                                 )}
 
                                 {/* Categories Table */}
-                                <div className="flex flex-col bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark overflow-hidden">
+                                <div className="flex flex-col bg-white rounded-xl shadow-sm border border-border-light overflow-hidden">
                                     <div className="w-full overflow-x-auto">
                                         <table className="w-full">
-                                            <thead className="bg-surface-light dark:bg-background-dark border-b border-border-light dark:border-border-dark">
+                                            <thead className="bg-surface-light border-b border-border-light">
                                                 <tr>
                                                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary">Tên</th>
                                                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary">Slug</th>
@@ -425,20 +425,20 @@ const EditorDashboard = () => {
                                                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary">Người tạo</th>
                                                 </tr>
                                             </thead>
-                                            <tbody className="divide-y divide-border-light dark:divide-border-dark">
+                                            <tbody className="divide-y divide-border-light">
                                                 {categories.map(category => (
-                                                    <tr key={category._id} className="hover:bg-surface-light dark:hover:bg-background-dark transition-colors">
+                                                    <tr key={category._id} className="hover:bg-surface-light transition-colors">
                                                         <td className="px-6 py-4">
-                                                            <p className="text-sm font-bold text-text-primary dark:text-white">{category.name}</p>
+                                                            <p className="text-sm font-bold text-text-primary">{category.name}</p>
                                                         </td>
                                                         <td className="px-6 py-4">
                                                             <p className="text-sm text-text-secondary">{category.slug}</p>
                                                         </td>
                                                         <td className="px-6 py-4">
-                                                            <p className="text-sm text-text-primary dark:text-gray-300">{category.description}</p>
+                                                            <p className="text-sm text-text-primary">{category.description}</p>
                                                         </td>
                                                         <td className="px-6 py-4">
-                                                            <p className="text-sm text-text-primary dark:text-gray-300">{category.createdBy?.username}</p>
+                                                            <p className="text-sm text-text-primary">{category.createdBy?.username}</p>
                                                         </td>
                                                     </tr>
                                                 ))}
@@ -451,10 +451,10 @@ const EditorDashboard = () => {
 
                         {/* Deletion Requests Tab */}
                         {activeTab === 'deletions' && (
-                            <div className="flex flex-col bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark overflow-hidden">
+                            <div className="flex flex-col bg-white rounded-xl shadow-sm border border-border-light overflow-hidden">
                                 <div className="w-full overflow-x-auto">
                                     <table className="w-full min-w-[900px]">
-                                        <thead className="bg-surface-light dark:bg-background-dark border-b border-border-light dark:border-border-dark">
+                                        <thead className="bg-surface-light border-b border-border-light">
                                             <tr>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary w-[20%]">Bài viết</th>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary w-[12%]">Tác giả</th>
@@ -465,7 +465,7 @@ const EditorDashboard = () => {
                                                 <th className="px-6 py-4 text-right text-xs font-semibold uppercase text-text-secondary w-[9%]">Hành động</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="divide-y divide-border-light dark:divide-border-dark">
+                                        <tbody className="divide-y divide-border-light">
                                             {deletionRequests.length === 0 ? (
                                                 <tr>
                                                     <td colSpan="7" className="px-6 py-8 text-center text-text-secondary">
@@ -474,34 +474,34 @@ const EditorDashboard = () => {
                                                 </tr>
                                             ) : (
                                                 deletionRequests.map(request => (
-                                                    <tr key={request._id} className="hover:bg-surface-light dark:hover:bg-background-dark transition-colors">
+                                                    <tr key={request._id} className="hover:bg-surface-light transition-colors">
                                                         <td className="px-6 py-4">
-                                                            <p className="text-sm font-bold text-text-primary dark:text-white">
+                                                            <p className="text-sm font-bold text-text-primary">
                                                                 {request.article?.title || '[Đã xóa]'}
                                                             </p>
                                                         </td>
                                                         <td className="px-6 py-4">
-                                                            <p className="text-sm text-text-primary dark:text-gray-300">{request.author?.username}</p>
+                                                            <p className="text-sm text-text-primary">{request.author?.username}</p>
                                                         </td>
                                                         <td className="px-6 py-4">
                                                             <p className="text-sm text-text-secondary line-clamp-2">{request.reason}</p>
                                                         </td>
                                                         <td className="px-6 py-4">
-                                                            <p className="text-sm text-text-primary dark:text-gray-300">
+                                                            <p className="text-sm text-text-primary">
                                                                 {new Date(request.createdAt).toLocaleDateString('vi-VN')}
                                                             </p>
                                                         </td>
                                                         <td className="px-6 py-4">
-                                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${request.status === 'approved' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                                                                request.status === 'rejected' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
-                                                                    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${request.status === 'approved' ? 'bg-green-100 text-green-800' :
+                                                                request.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                                                                    'bg-yellow-100 text-yellow-800'
                                                                 }`}>
                                                                 {request.status === 'approved' ? 'Đã duyệt' :
                                                                     request.status === 'rejected' ? 'Từ chối' : 'Chờ duyệt'}
                                                             </span>
                                                         </td>
                                                         <td className="px-6 py-4">
-                                                            <p className="text-sm text-text-primary dark:text-gray-300">
+                                                            <p className="text-sm text-text-primary">
                                                                 {request.reviewedBy?.username || '-'}
                                                             </p>
                                                         </td>
@@ -510,14 +510,14 @@ const EditorDashboard = () => {
                                                                 <div className="flex items-center justify-end gap-1">
                                                                     <button
                                                                         onClick={() => handleApproveDeletion(request._id)}
-                                                                        className="text-text-secondary hover:text-green-500 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                        className="text-text-secondary hover:text-green-500 p-2 rounded-full hover:bg-gray-100 transition-colors"
                                                                         title="Duyệt"
                                                                     >
                                                                         <span className="material-symbols-outlined text-[20px]">check_circle</span>
                                                                     </button>
                                                                     <button
                                                                         onClick={() => handleRejectDeletion(request._id)}
-                                                                        className="text-text-secondary hover:text-red-500 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                                        className="text-text-secondary hover:text-red-500 p-2 rounded-full hover:bg-gray-100 transition-colors"
                                                                         title="Từ chối"
                                                                     >
                                                                         <span className="material-symbols-outlined text-[20px]">cancel</span>

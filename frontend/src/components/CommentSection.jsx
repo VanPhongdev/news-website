@@ -146,20 +146,20 @@ const CommentSection = ({ articleId }) => {
                         {comment.author.username.charAt(0).toUpperCase()}
                     </div>
                 ) : (
-                    <div className="w-full h-full bg-gray-300 dark:bg-gray-700"></div>
+                    <div className="w-full h-full bg-gray-300"></div>
                 )}
             </div>
             <div className="flex-grow">
-                <div className="bg-gray-50 dark:bg-surface-dark p-4 rounded-xl rounded-tl-none">
+                <div className="bg-gray-50 p-4 rounded-xl rounded-tl-none">
                     <div className="flex justify-between items-baseline mb-1">
-                        <h4 className="font-bold text-gray-900 dark:text-white text-sm">
+                        <h4 className="font-bold text-gray-900 text-sm">
                             {comment.author?.username || 'Người dùng'}
                         </h4>
                         <span className="text-xs text-gray-500">
                             {formatDate(comment.createdAt)}
                         </span>
                     </div>
-                    <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                    <p className="text-gray-700 text-sm leading-relaxed">
                         {comment.content}
                     </p>
                 </div>
@@ -194,7 +194,7 @@ const CommentSection = ({ articleId }) => {
                 {replyTo === comment._id && (
                     <div className="mt-4 ml-2">
                         <textarea
-                            className="w-full p-3 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent min-h-[80px] resize-y text-gray-900 dark:text-white text-sm"
+                            className="w-full p-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent min-h-[80px] resize-y text-gray-900 text-sm"
                             placeholder="Viết câu trả lời..."
                             value={replyContent}
                             onChange={(e) => setReplyContent(e.target.value)}
@@ -212,7 +212,7 @@ const CommentSection = ({ articleId }) => {
                                     setReplyTo(null);
                                     setReplyContent('');
                                 }}
-                                className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-white font-bold py-1.5 px-4 rounded-lg transition-colors text-sm"
+                                className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-1.5 px-4 rounded-lg transition-colors text-sm"
                             >
                                 Hủy
                             </button>
@@ -232,7 +232,7 @@ const CommentSection = ({ articleId }) => {
 
     return (
         <div className="font-sans">
-            <h3 className="text-2xl font-bold font-display text-gray-900 dark:text-white mb-6">
+            <h3 className="text-2xl font-bold font-display text-gray-900 mb-6">
                 Bình luận ({comments.reduce((total, c) => total + 1 + (c.replies?.length || 0), 0)})
             </h3>
 
@@ -245,7 +245,7 @@ const CommentSection = ({ articleId }) => {
                     <div className="flex-grow">
                         <form onSubmit={handleSubmit}>
                             <textarea
-                                className="w-full p-4 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent min-h-[100px] resize-y text-gray-900 dark:text-white"
+                                className="w-full p-4 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent min-h-[100px] resize-y text-gray-900"
                                 placeholder="Chia sẻ ý kiến của bạn..."
                                 value={newComment}
                                 onChange={(e) => setNewComment(e.target.value)}
@@ -267,8 +267,8 @@ const CommentSection = ({ articleId }) => {
                     </div>
                 </div>
             ) : (
-                <div className="bg-gray-50 dark:bg-surface-dark p-6 rounded-xl border border-gray-100 dark:border-gray-800 mb-10 text-center">
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
+                <div className="bg-gray-50 p-6 rounded-xl border border-gray-100 mb-10 text-center">
+                    <p className="text-gray-600 mb-4">
                         Vui lòng đăng nhập để bình luận
                     </p>
                     <a
@@ -283,7 +283,7 @@ const CommentSection = ({ articleId }) => {
             {/* Comment List */}
             <div className="space-y-8">
                 {comments.length === 0 ? (
-                    <p className="text-center text-gray-500 dark:text-gray-400 py-8">
+                    <p className="text-center text-gray-500 py-8">
                         Chưa có bình luận nào. Hãy là người đầu tiên bình luận!
                     </p>
                 ) : (
@@ -292,7 +292,7 @@ const CommentSection = ({ articleId }) => {
             </div>
 
             {comments.length > 5 && (
-                <button className="w-full py-3 mt-8 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-600 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                <button className="w-full py-3 mt-8 border border-gray-200 rounded-lg text-gray-600 font-medium hover:bg-gray-50 transition-colors">
                     Xem thêm bình luận
                 </button>
             )}
