@@ -6,7 +6,7 @@ const { generateToken } = require('../middleware/auth.middleware');
 // @access  Public
 exports.register = async (req, res) => {
     try {
-        const { username, email, password, role } = req.body;
+        const { username, displayName, email, password, role } = req.body;
 
         // Check if user already exists
         const userExists = await User.findOne({ $or: [{ email }, { username }] });
@@ -40,6 +40,7 @@ exports.register = async (req, res) => {
         // Create user
         const user = await User.create({
             username,
+            displayName,
             email,
             password,
             role: userRole
@@ -53,6 +54,7 @@ exports.register = async (req, res) => {
             data: {
                 _id: user._id,
                 username: user.username,
+                displayName: user.displayName,
                 email: user.email,
                 role: user.role,
                 token
@@ -111,6 +113,7 @@ exports.login = async (req, res) => {
             data: {
                 _id: user._id,
                 username: user.username,
+                displayName: user.displayName,
                 email: user.email,
                 role: user.role,
                 token

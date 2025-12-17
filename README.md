@@ -114,14 +114,7 @@ cd backend
 npm run fetch-news
 ```
 
-**Tính năng:**
-- Lấy tin từ 9 chuyên mục của VnExpress
-- Tự động map với categories trong database
-- Random phân bổ cho các tác giả
-- Kiểm tra trùng lặp theo tiêu đề
-- Mục tiêu: 5 bài mới mỗi chuyên mục (tối đa kiểm tra 20 bài)
-
-**Lưu ý:** Chạy script này khi cần cập nhật tin tức mới
+**Lưu ý:** Chạy script này khi cần lấy dữ liệu tin tức mẫu
 
 ## Cấu trúc thư mục
 

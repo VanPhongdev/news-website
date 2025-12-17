@@ -206,7 +206,7 @@ const Navbar = () => {
                                 Author
                             </Link>
                         )}
-                        <span className="text-text-secondary text-sm">Xin chào, {user.username}</span>
+                        <span className="text-text-secondary text-sm">Xin chào, {user.displayName || user.username}</span>
                         <button
                             onClick={handleLogout}
                             className="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-surface-light hover:bg-border-light transition-colors text-text-primary text-sm font-medium"

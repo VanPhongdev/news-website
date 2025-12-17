@@ -40,8 +40,8 @@ export const AuthProvider = ({ children }) => {
         return userData; // Return user data for role-based redirect
     };
 
-    const register = async (username, email, password, role = 'reader') => {
-        const response = await authAPI.register({ username, email, password, role });
+    const register = async (displayName, username, email, password, role = 'reader') => {
+        const response = await authAPI.register({ displayName, username, email, password, role });
         const { token, ...userData } = response.data.data;
         localStorage.setItem('token', token);
         setUser(userData);

@@ -165,12 +165,12 @@ const ArticleDetail = () => {
                             <div className="flex items-center gap-4">
                                 <div className="relative w-12 h-12">
                                     <div className="rounded-full w-full h-full bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-white font-bold text-lg">
-                                        {article.author?.username?.charAt(0).toUpperCase() || 'A'}
+                                        {(article.author?.displayName || article.author?.username)?.charAt(0).toUpperCase() || 'A'}
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-base font-bold text-gray-900">
-                                        {article.author?.username || 'Tác giả'}
+                                        {article.author?.displayName || article.author?.username || 'Tác giả'}
                                     </span>
                                     <span className="text-sm text-gray-500">
                                         {formatDate(article.publishedAt || article.createdAt)} • {article.views || 0} lượt xem

@@ -6,6 +6,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const Register = () => {
     const [formData, setFormData] = useState({
+        displayName: '',
         username: '',
         email: '',
         password: '',
@@ -53,6 +54,7 @@ const Register = () => {
 
         try {
             await axios.post(`${API_URL}/auth/register`, {
+                displayName: formData.displayName,
                 username: formData.username,
                 email: formData.email,
                 password: formData.password
@@ -87,12 +89,31 @@ const Register = () => {
                     {/* Form */}
                     <div className="p-8">
                         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                            {/* Username Field */}
+                            {/* Display Name Field */}
                             <div className="flex flex-col gap-2">
-                                <label className="text-[#111418] text-sm font-medium">Tên hiển thị</label>
+                                <label className="text-[#111418] text-sm font-medium">Họ và tên</label>
                                 <div className="relative">
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#637588]">
                                         <span className="material-symbols-outlined text-[20px]">person</span>
+                                    </span>
+                                    <input
+                                        type="text"
+                                        name="displayName"
+                                        value={formData.displayName}
+                                        onChange={handleChange}
+                                        className="w-full h-12 pl-11 pr-4 rounded-lg border border-[#dbe0e6] bg-white text-[#111418] placeholder:text-[#9ca3af] text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                                        placeholder="Nguyễn Văn A"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Username Field */}
+                            <div className="flex flex-col gap-2">
+                                <label className="text-[#111418] text-sm font-medium">Tên đăng nhập</label>
+                                <div className="relative">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#637588]">
+                                        <span className="material-symbols-outlined text-[20px]">badge</span>
                                     </span>
                                     <input
                                         type="text"
@@ -100,7 +121,9 @@ const Register = () => {
                                         value={formData.username}
                                         onChange={handleChange}
                                         className="w-full h-12 pl-11 pr-4 rounded-lg border border-[#dbe0e6] bg-white text-[#111418] placeholder:text-[#9ca3af] text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                                        placeholder="Nguyễn Văn A"
+                                        placeholder="nguyenvana123"
+                                        pattern="[a-z0-9_]+"
+                                        title="Chỉ được dùng chữ thường, số và dấu gạch dưới"
                                         required
                                     />
                                 </div>

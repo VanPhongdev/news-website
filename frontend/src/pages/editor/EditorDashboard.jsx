@@ -13,6 +13,7 @@ const EditorDashboard = () => {
     const [activeTab, setActiveTab] = useState('pending');
     const [showCategoryForm, setShowCategoryForm] = useState(false);
     const [newCategory, setNewCategory] = useState({ name: '', description: '' });
+    const [editingCategory, setEditingCategory] = useState(null);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -66,6 +67,33 @@ const EditorDashboard = () => {
             alert('Tạo chuyên mục thành công');
         } catch (error) {
             alert('Lỗi: ' + (error.response?.data?.message || 'Không thể tạo chuyên mục'));
+        }
+    };
+
+    const handleUpdateCategory = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await categoryAPI.updateCategory(editingCategory._id, {
+                name: editingCategory.name,
+                description: editingCategory.description
+            });
+            setCategories(categories.map(c => c._id === editingCategory._id ? response.data.data : c));
+            setEditingCategory(null);
+            alert('Cập nhật chuyên mục thành công');
+        } catch (error) {
+            alert('Lỗi: ' + (error.response?.data?.message || 'Không thể cập nhật chuyên mục'));
+        }
+    };
+
+    const handleDeleteCategory = async (id) => {
+        if (window.confirm('Bạn có chắc chắn muốn xóa chuyên mục này?')) {
+            try {
+                await categoryAPI.deleteCategory(id);
+                setCategories(categories.filter(c => c._id !== id));
+                alert('Xóa chuyên mục thành công');
+            } catch (error) {
+                alert('Lỗi: ' + (error.response?.data?.message || 'Không thể xóa chuyên mục'));
+            }
         }
     };
 
@@ -133,7 +161,7 @@ const EditorDashboard = () => {
                             </div>
                             <div className="flex flex-col">
                                 <h1 className="text-text-primary text-base font-bold">
-                                    {user.username}
+                                    {user.displayName || user.username}
                                 </h1>
                                 <p className="text-text-secondary text-xs">Editor</p>
                             </div>
@@ -296,7 +324,7 @@ const EditorDashboard = () => {
                                                             </div>
                                                         </td>
                                                         <td className="px-6 py-4">
-                                                            <p className="text-sm text-text-primary">{article.author?.username}</p>
+                                                            <p className="text-sm text-text-primary">{article.author?.displayName || article.author?.username}</p>
                                                         </td>
                                                         <td className="px-6 py-4">
                                                             <p className="text-sm text-text-primary">{article.category?.name}</p>
@@ -361,7 +389,7 @@ const EditorDashboard = () => {
                         {activeTab === 'categories' && (
                             <div className="flex flex-col gap-6">
                                 {/* Create Category Form */}
-                                {!showCategoryForm ? (
+                                {!showCategoryForm && !editingCategory ? (
                                     <button
                                         onClick={() => setShowCategoryForm(true)}
                                         className="self-start flex items-center gap-2 px-5 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors shadow-sm"
@@ -369,7 +397,7 @@ const EditorDashboard = () => {
                                         <span className="material-symbols-outlined text-[20px]">add</span>
                                         <span>Tạo chuyên mục mới</span>
                                     </button>
-                                ) : (
+                                ) : showCategoryForm ? (
                                     <div className="bg-white rounded-xl shadow-sm border border-border-light p-6">
                                         <h3 className="text-lg font-bold text-text-primary mb-4">Tạo chuyên mục mới</h3>
                                         <form onSubmit={handleCreateCategory} className="space-y-4">
@@ -411,6 +439,45 @@ const EditorDashboard = () => {
                                             </div>
                                         </form>
                                     </div>
+                                ) : (
+                                    <div className="bg-white rounded-xl shadow-sm border border-border-light p-6">
+                                        <h3 className="text-lg font-bold text-text-primary mb-4">Chỉnh sửa chuyên mục</h3>
+                                        <form onSubmit={handleUpdateCategory} className="space-y-4">
+                                            <div>
+                                                <label className="block text-text-primary text-sm font-medium mb-2">Tên chuyên mục *</label>
+                                                <input
+                                                    type="text"
+                                                    value={editingCategory.name}
+                                                    onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
+                                                    className="w-full px-4 py-2 rounded-lg border border-border-light bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                                    required
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-text-primary text-sm font-medium mb-2">Mô tả</label>
+                                                <textarea
+                                                    value={editingCategory.description}
+                                                    onChange={(e) => setEditingCategory({ ...editingCategory, description: e.target.value })}
+                                                    className="w-full px-4 py-2 rounded-lg border border-border-light bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[80px]"
+                                                />
+                                            </div>
+                                            <div className="flex gap-3">
+                                                <button
+                                                    type="submit"
+                                                    className="px-5 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors shadow-sm"
+                                                >
+                                                    Cập nhật
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setEditingCategory(null)}
+                                                    className="px-5 py-2 border border-border-light text-text-primary rounded-lg hover:bg-surface-light transition-colors"
+                                                >
+                                                    Hủy
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 )}
 
                                 {/* Categories Table */}
@@ -423,6 +490,7 @@ const EditorDashboard = () => {
                                                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary">Slug</th>
                                                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary">Mô tả</th>
                                                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-text-secondary">Người tạo</th>
+                                                    <th className="px-6 py-4 text-right text-xs font-semibold uppercase text-text-secondary">Hành động</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-border-light">
@@ -439,6 +507,24 @@ const EditorDashboard = () => {
                                                         </td>
                                                         <td className="px-6 py-4">
                                                             <p className="text-sm text-text-primary">{category.createdBy?.username}</p>
+                                                        </td>
+                                                        <td className="px-6 py-4 text-right">
+                                                            <div className="flex items-center justify-end gap-1">
+                                                                <button
+                                                                    onClick={() => setEditingCategory(category)}
+                                                                    className="text-text-secondary hover:text-primary p-2 rounded-full hover:bg-gray-100 transition-colors"
+                                                                    title="Chỉnh sửa"
+                                                                >
+                                                                    <span className="material-symbols-outlined text-[20px]">edit</span>
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => handleDeleteCategory(category._id)}
+                                                                    className="text-text-secondary hover:text-red-500 p-2 rounded-full hover:bg-gray-100 transition-colors"
+                                                                    title="Xóa"
+                                                                >
+                                                                    <span className="material-symbols-outlined text-[20px]">delete</span>
+                                                                </button>
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 ))}

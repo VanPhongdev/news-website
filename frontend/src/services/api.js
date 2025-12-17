@@ -76,7 +76,8 @@ export const commentAPI = {
     getCommentsByArticle: (articleId) => api.get(`/articles/${articleId}/comments`),
     createComment: (articleId, content) => api.post(`/articles/${articleId}/comments`, { content }),
     updateComment: (commentId, content) => api.put(`/comments/${commentId}`, { content }),
-    deleteComment: (commentId) => api.delete(`/comments/${commentId}`)
+    deleteComment: (commentId) => api.delete(`/comments/${commentId}`),
+    toggleLike: (commentId) => api.post(`/comments/${commentId}/like`)
 };
 
 export default api;

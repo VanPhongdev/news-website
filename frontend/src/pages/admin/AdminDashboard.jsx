@@ -153,7 +153,7 @@ const AdminDashboard = () => {
                             </div>
                             <div className="flex flex-col">
                                 <h1 className="text-text-primary text-base font-bold">
-                                    {user.username}
+                                    {user.displayName || user.username}
                                 </h1>
                                 <p className="text-text-secondary text-xs">Admin</p>
                             </div>
@@ -372,7 +372,7 @@ const AdminDashboard = () => {
                                                 .filter(user => roleFilter === 'all' || user.role === roleFilter)
                                                 .map(user => (
                                                     <tr key={user._id} className="hover:bg-surface-light transition-colors">
-                                                        <td className="px-6 py-4 text-text-primary text-sm font-medium">{user.username}</td>
+                                                        <td className="px-6 py-4 text-text-primary text-sm font-medium">{user.displayName || user.username}</td>
                                                         <td className="px-6 py-4 text-text-secondary text-sm">{user.email}</td>
                                                         <td className="px-6 py-4">
                                                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' :
@@ -461,7 +461,7 @@ const AdminDashboard = () => {
                                                 <option value="all">Tất cả tác giả ({articles.length})</option>
                                                 {users.filter(u => u.role === 'author').map(author => (
                                                     <option key={author._id} value={author._id}>
-                                                        {author.username} ({articles.filter(a => a.author?._id === author._id).length})
+                                                        {author.displayName || author.username} ({articles.filter(a => a.author?._id === author._id).length})
                                                     </option>
                                                 ))}
                                             </select>
@@ -526,7 +526,7 @@ const AdminDashboard = () => {
                                                 .map(article => (
                                                     <tr key={article._id} className="hover:bg-surface-light transition-colors">
                                                         <td className="px-6 py-4 text-text-primary text-sm font-medium max-w-xs truncate">{article.title}</td>
-                                                        <td className="px-6 py-4 text-text-secondary text-sm">{article.author?.username}</td>
+                                                        <td className="px-6 py-4 text-text-secondary text-sm">{article.author?.displayName || article.author?.username}</td>
                                                         <td className="px-6 py-4 text-text-secondary text-sm">{article.category?.name}</td>
                                                         <td className="px-6 py-4">
                                                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${article.status === 'published' ? 'bg-green-100 text-green-800' :

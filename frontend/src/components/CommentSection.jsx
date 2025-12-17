@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { commentAPI } from '../services/api';
 import axios from 'axios';
 import './CommentSection.css';
 
@@ -82,18 +83,33 @@ const CommentSection = ({ articleId }) => {
     };
 
     const handleLike = async (commentId) => {
+        if (!isAuthenticated) return;
+
         try {
-            const token = localStorage.getItem('token');
-            await axios.post(
-                `${API_URL}/comments/${commentId}/like`,
-                {},
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
+            const response = await commentAPI.toggleLike(commentId);
+
+            // Update the comment in state with new like data
+            const updateCommentLikes = (commentsList) => {
+                return commentsList.map(comment => {
+                    if (comment._id === commentId) {
+                        return {
+                            ...comment,
+                            likesCount: response.data.data.likesCount,
+                            isLiked: response.data.data.isLiked
+                        };
                     }
-                }
-            );
-            fetchComments();
+                    // Update nested replies
+                    if (comment.replies && comment.replies.length > 0) {
+                        return {
+                            ...comment,
+                            replies: updateCommentLikes(comment.replies)
+                        };
+                    }
+                    return comment;
+                });
+            };
+
+            setComments(updateCommentLikes(comments));
         } catch (error) {
             console.error('Error liking comment:', error);
         }
@@ -143,7 +159,7 @@ const CommentSection = ({ articleId }) => {
             <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
                 {comment.author?.username ? (
                     <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
-                        {comment.author.username.charAt(0).toUpperCase()}
+                        {(comment.author.displayName || comment.author.username).charAt(0).toUpperCase()}
                     </div>
                 ) : (
                     <div className="w-full h-full bg-gray-300"></div>
@@ -166,10 +182,16 @@ const CommentSection = ({ articleId }) => {
                 <div className="flex gap-4 mt-2 ml-2 text-xs font-medium text-gray-500">
                     <button
                         onClick={() => handleLike(comment._id)}
-                        className="hover:text-primary flex items-center gap-1"
+                        className={`flex items-center gap-1 transition-colors ${comment.isLiked
+                            ? 'text-primary hover:text-blue-600'
+                            : 'hover:text-primary'
+                            }`}
                         disabled={!isAuthenticated}
                     >
-                        <span className="material-symbols-outlined text-[16px]">thumb_up</span>
+                        <span className={`material-symbols-outlined text-[16px] ${comment.isLiked ? 'filled' : ''
+                            }`}>
+                            thumb_up
+                        </span>
                         {comment.likesCount > 0 && <span>{comment.likesCount}</span>}
                     </button>
                     {isAuthenticated && (
@@ -180,7 +202,7 @@ const CommentSection = ({ articleId }) => {
                             Trả lời
                         </button>
                     )}
-                    {isAuthenticated && user?._id === comment.author?._id && (
+                    {isAuthenticated && (user?._id === comment.author?._id || user?.role === 'admin') && (
                         <button
                             onClick={() => handleDelete(comment._id)}
                             className="hover:text-red-500"

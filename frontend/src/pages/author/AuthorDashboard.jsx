@@ -166,7 +166,7 @@ const AuthorDashboard = () => {
                             </div>
                             <div className="flex flex-col">
                                 <h1 className="text-text-primary text-base font-bold">
-                                    {user.username}
+                                    {user.displayName || user.username}
                                 </h1>
                                 <p className="text-text-secondary text-xs">Author</p>
                             </div>

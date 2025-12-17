@@ -7,7 +7,15 @@ const userSchema = new mongoose.Schema({
         required: [true, 'Please provide a username'],
         unique: true,
         trim: true,
-        minlength: [3, 'Username must be at least 3 characters']
+        lowercase: true, // Tự động chuyển thành chữ thường
+        minlength: [3, 'Username must be at least 3 characters'],
+        match: [/^[a-z0-9_]+$/, 'Username can only contain lowercase letters, numbers, and underscores']
+    },
+    displayName: {
+        type: String,
+        required: [true, 'Please provide your full name'],
+        trim: true,
+        minlength: [2, 'Display name must be at least 2 characters']
     },
     email: {
         type: String,
