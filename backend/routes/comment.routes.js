@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router({ mergeParams: true }); // mergeParams to access articleId from parent router
+const router = express.Router({ mergeParams: true }); // mergeParams để truy cập articleId từ parent router
 const {
     getCommentsByArticle,
     createComment,
@@ -10,19 +10,19 @@ const {
 const { protect } = require('../middleware/auth.middleware');
 const { canComment } = require('../middleware/role.middleware');
 
-// Routes for comments on a specific article
-// These will be mounted at /api/articles/:articleId/comments
+// Routes cho bình luận của một bài viết cụ thể
+// Các routes này sẽ được mount tại /api/articles/:articleId/comments
 router.route('/')
     .get(getCommentsByArticle)
     .post(protect, canComment, createComment);
 
-// Routes for individual comments
-// These will be mounted at /api/comments/:id
+// Routes cho từng bình luận riêng lẻ
+// Các routes này sẽ được mount tại /api/comments/:id
 router.route('/:id')
     .put(protect, updateComment)
     .delete(protect, deleteComment);
 
-// Route for liking a comment
+// Route cho việc thích bình luận
 router.post('/:id/like', protect, toggleLike);
 
 module.exports = router;

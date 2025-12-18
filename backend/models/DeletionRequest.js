@@ -13,9 +13,9 @@ const deletionRequestSchema = new mongoose.Schema({
     },
     reason: {
         type: String,
-        required: [true, 'Please provide a reason for deletion'],
-        minlength: [10, 'Reason must be at least 10 characters'],
-        maxlength: [500, 'Reason cannot exceed 500 characters']
+        required: [true, 'Vui lòng cung cấp lý do xóa'],
+        minlength: [10, 'Lý do phải ít nhất 10 ký tự'],
+        maxlength: [500, 'Lý do không thể vượt quá 500 ký tự']
     },
     status: {
         type: String,

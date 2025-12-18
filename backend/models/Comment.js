@@ -3,19 +3,19 @@ const mongoose = require('mongoose');
 const commentSchema = new mongoose.Schema({
     content: {
         type: String,
-        required: [true, 'Please provide comment content'],
+        required: [true, 'Vui lòng cung cấp nội dung bình luận'],
         trim: true,
-        maxlength: [1000, 'Comment cannot be more than 1000 characters']
+        maxlength: [1000, 'Bình luận không thể vượt quá 1000 ký tự']
     },
     article: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Article',
-        required: [true, 'Comment must belong to an article']
+        required: [true, 'Bình luận phải thuộc về một bài viết']
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: [true, 'Comment must have an author']
+        required: [true, 'Bình luận phải có tác giả']
     },
     parent: {
         type: mongoose.Schema.Types.ObjectId,
@@ -36,13 +36,13 @@ const commentSchema = new mongoose.Schema({
     }
 });
 
-// Update timestamp before saving
+// Cập nhật timestamp trước khi lưu
 commentSchema.pre('save', function (next) {
     this.updatedAt = Date.now();
     next();
 });
 
-// Index for faster queries
+// Index để truy vấn nhanh hơn
 commentSchema.index({ article: 1, createdAt: -1 });
 
 module.exports = mongoose.model('Comment', commentSchema);

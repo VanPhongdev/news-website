@@ -43,8 +43,8 @@ const Navbar = () => {
     };
 
     const calculateVisibleCategories = () => {
-        // On large screens, show first 6 categories, rest in dropdown
-        // On medium screens, show first 3 categories
+        // Trên màn hình lớn, hiển thị 6 chuyên mục đầu tiên, phần còn lại trong dropdown
+        // Trên màn hình trung bình, hiển thị 3 chuyên mục đầu tiên
         const screenWidth = window.innerWidth;
         let maxVisible = 6;
 

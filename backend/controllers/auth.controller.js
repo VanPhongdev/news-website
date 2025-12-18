@@ -1,43 +1,32 @@
 const User = require('../models/User');
 const { generateToken } = require('../middleware/auth.middleware');
 
-// @desc    Register user
+// @desc    Đăng ký người dùng
 // @route   POST /api/auth/register
 // @access  Public
 exports.register = async (req, res) => {
     try {
         const { username, displayName, email, password, role } = req.body;
 
-        // Check if user already exists
+        // Kiểm tra xem người dùng đã tồn tại chưa
         const userExists = await User.findOne({ $or: [{ email }, { username }] });
 
         if (userExists) {
             return res.status(400).json({
                 success: false,
-                message: 'User already exists'
+                message: 'Tên người dùng hoặc email đã tồn tại'
             });
         }
 
-        // Validate password length
+        // Kiểm tra độ dài mật khẩu
         if (!password || password.length < 6) {
             return res.status(400).json({
                 success: false,
-                message: 'Password must be at least 6 characters long'
+                message: 'Mật khẩu phải có ít nhất 6 ký tự'
             });
         }
 
-        // Validate role - only allow 'reader' and 'author' during registration
-        const allowedRoles = ['reader', 'author'];
-        const userRole = role || 'reader';
-
-        if (!allowedRoles.includes(userRole)) {
-            return res.status(403).json({
-                success: false,
-                message: 'Cannot register with this role. Please contact an administrator.'
-            });
-        }
-
-        // Create user
+        // Tạo người dùng
         const user = await User.create({
             username,
             displayName,
@@ -46,7 +35,7 @@ exports.register = async (req, res) => {
             role: userRole
         });
 
-        // Generate token
+        // Tạo token
         const token = generateToken(user._id);
 
         res.status(201).json({
@@ -68,22 +57,22 @@ exports.register = async (req, res) => {
     }
 };
 
-// @desc    Login user
+// @desc    Đăng nhập
 // @route   POST /api/auth/login
 // @access  Public
 exports.login = async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        // Validate username & password
+        // Kiểm tra username và password
         if (!username || !password) {
             return res.status(400).json({
                 success: false,
-                message: 'Please provide username and password'
+                message: 'Xin vui lòng nhập tên người dùng và mật khẩu'
             });
         }
 
-        // Check for user by username or email (include password field)
+        // Tìm người dùng theo username hoặc email (bao gồm trường password)
         const user = await User.findOne({
             $or: [{ username }, { email: username }]
         }).select('+password');
@@ -91,21 +80,21 @@ exports.login = async (req, res) => {
         if (!user) {
             return res.status(401).json({
                 success: false,
-                message: 'Invalid credentials'
+                message: 'Tên người dùng hoặc mật khẩu không chính xác'
             });
         }
 
-        // Check if password matches
+        // Kiểm tra mật khẩu có khớp không
         const isMatch = await user.comparePassword(password);
 
         if (!isMatch) {
             return res.status(401).json({
                 success: false,
-                message: 'Invalid credentials'
+                message: 'Tên người dùng hoặc mật khẩu không chính xác'
             });
         }
 
-        // Generate token
+        // Tạo token
         const token = generateToken(user._id);
 
         res.status(200).json({
@@ -127,7 +116,7 @@ exports.login = async (req, res) => {
     }
 };
 
-// @desc    Get current logged in user
+// @desc    Lấy thông tin người dùng hiện tại
 // @route   GET /api/auth/me
 // @access  Private
 exports.getMe = async (req, res) => {

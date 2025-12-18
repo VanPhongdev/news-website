@@ -34,7 +34,7 @@ const Register = () => {
         e.preventDefault();
         setError('');
 
-        // Validate password length
+        // Kiểm tra độ dài mật khẩu
         if (formData.password.length < 6) {
             setError('Mật khẩu phải có ít nhất 6 ký tự');
             return;

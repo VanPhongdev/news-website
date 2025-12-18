@@ -1,21 +1,21 @@
 const Article = require('../models/Article');
 
-// @desc    Get all articles with search and filter
+// @desc    Lấy tất cả bài viết với tìm kiếm và lọc
 // @route   GET /api/articles?search=keyword&category=id&status=published&author=id
-// @access  Public (published only) / Private (based on role)
+// @access  Public (chỉ published) / Private (dựa trên role)
 exports.getArticles = async (req, res) => {
     try {
         let query = {};
 
-        // Base query based on user role
+        // Query cơ bản dựa trên vai trò người dùng
         if (!req.user) {
             query.status = 'published';
         } else {
-            // Admin and Editor can see all articles
+            // Admin và Editor có thể xem bài pending, approved và published (Không bao gồm draft)
             if (req.user.role === 'admin' || req.user.role === 'editor') {
-                // No filter, show all
+                query.status = { $in: ['pending', 'approved', 'published'] };
             } else if (req.user.role === 'author') {
-                // Authors can only see their own articles or published articles
+                // Author chỉ có thể xem bài của mình hoặc bài published
                 query = {
                     $or: [
                         { author: req.user._id },
@@ -23,18 +23,18 @@ exports.getArticles = async (req, res) => {
                     ]
                 };
             } else {
-                // Readers can only see published articles
+                // Reader chỉ có thể xem bài published
                 query.status = 'published';
             }
         }
 
-        // Search functionality - search only in title
+        // Chức năng tìm kiếm - chỉ tìm trong tiêu đề
         if (req.query.search) {
             const searchRegex = new RegExp(req.query.search, 'i');
 
-            // Combine with existing query
+            // Kết hợp với query hiện tại
             if (query.$or) {
-                // If query already has $or (for author role), combine with $and
+                // Nếu query đã có $or (cho role author), kết hợp với $and
                 query = {
                     $and: [
                         { $or: query.$or },
@@ -42,12 +42,12 @@ exports.getArticles = async (req, res) => {
                     ]
                 };
             } else {
-                // Otherwise, add search condition
+                // Ngược lại, thêm điều kiện tìm kiếm
                 query.title = searchRegex;
             }
         }
 
-        // Filter by category (using slug)
+        // Lọc theo chuyên mục (sử dụng slug)
         if (req.query.category) {
             const Category = require('../models/Category');
             const category = await Category.findOne({ slug: req.query.category });
@@ -60,7 +60,7 @@ exports.getArticles = async (req, res) => {
             }
         }
 
-        // Filter by author
+        // Lọc theo tác giả
         if (req.query.author) {
             if (query.$and) {
                 query.$and.push({ author: req.query.author });
@@ -69,15 +69,15 @@ exports.getArticles = async (req, res) => {
             }
         }
 
-        // Pagination
+        // Phân trang
         const page = parseInt(req.query.page, 10) || 1;
         const limit = parseInt(req.query.limit, 10) || 10;
         const startIndex = (page - 1) * limit;
 
-        // Get total count for pagination
+        // Lấy tổng số bài viết cho phân trang
         const total = await Article.countDocuments(query);
 
-        // Execute query with pagination
+        // Thực thi query với phân trang
         const articles = await Article.find(query)
             .populate('author', 'username email')
             .populate('category', 'name slug')
@@ -85,7 +85,7 @@ exports.getArticles = async (req, res) => {
             .skip(startIndex)
             .limit(limit);
 
-        // Pagination result
+        // Kết quả phân trang
         const pagination = {
             current: page,
             limit: limit,
@@ -107,9 +107,9 @@ exports.getArticles = async (req, res) => {
     }
 };
 
-// @desc    Get single article by ID
+// @desc    Lấy một bài viết theo ID
 // @route   GET /api/articles/:id
-// @access  Public (published) / Private (own articles)
+// @access  Public (published) / Private (bài viết của mình)
 exports.getArticle = async (req, res) => {
     try {
         const article = await Article.findById(req.params.id)
@@ -119,35 +119,45 @@ exports.getArticle = async (req, res) => {
         if (!article) {
             return res.status(404).json({
                 success: false,
-                message: 'Article not found'
+                message: 'Bài viết không tồn tại'
             });
         }
 
-        // Check access permissions
+        // Kiểm tra quyền truy cập
         if (article.status !== 'published') {
             if (!req.user) {
                 return res.status(403).json({
                     success: false,
-                    message: 'Access denied'
+                    message: 'Truy cập bị từ chối'
                 });
             }
 
-            // Only author, editor, or admin can view unpublished articles
-            if (req.user.role === 'author' && article.author._id.toString() !== req.user._id.toString()) {
-                return res.status(403).json({
-                    success: false,
-                    message: 'Access denied'
-                });
-            }
+            // Bài viết draft: chỉ tác giả mới xem được
+            if (article.status === 'draft') {
+                if (article.author._id.toString() !== req.user._id.toString()) {
+                    return res.status(403).json({
+                        success: false,
+                        message: 'Truy cập bị từ chối'
+                    });
+                }
+            } else {
+                // Bài viết Pending/Approved: tác giả, editor hoặc admin có thể xem
+                if (req.user.role === 'author' && article.author._id.toString() !== req.user._id.toString()) {
+                    return res.status(403).json({
+                        success: false,
+                        message: 'Truy cập bị từ chối'
+                    });
+                }
 
-            if (req.user.role === 'reader') {
-                return res.status(403).json({
-                    success: false,
-                    message: 'Access denied'
-                });
+                if (req.user.role === 'reader') {
+                    return res.status(403).json({
+                        success: false,
+                        message: 'Truy cập bị từ chối'
+                    });
+                }
             }
         } else {
-            // Increment views for published articles
+            // Tăng lượt xem cho bài viết published
             article.views += 1;
             await article.save();
         }
@@ -164,9 +174,9 @@ exports.getArticle = async (req, res) => {
     }
 };
 
-// @desc    Get single article by slug
+// @desc    Lấy một bài viết theo slug
 // @route   GET /api/articles/slug/:slug
-// @access  Public (published) / Private (own articles)
+// @access  Public (published) / Private (bài viết của mình)
 exports.getArticleBySlug = async (req, res) => {
     try {
         const article = await Article.findOne({ slug: req.params.slug })
@@ -176,35 +186,45 @@ exports.getArticleBySlug = async (req, res) => {
         if (!article) {
             return res.status(404).json({
                 success: false,
-                message: 'Article not found'
+                message: 'Bài viết không tồn tại'
             });
         }
 
-        // Check access permissions
+        // Kiểm tra quyền truy cập
         if (article.status !== 'published') {
             if (!req.user) {
                 return res.status(403).json({
                     success: false,
-                    message: 'Access denied'
+                    message: 'Truy cập bị từ chối'
                 });
             }
 
-            // Only author, editor, or admin can view unpublished articles
-            if (req.user.role === 'author' && article.author._id.toString() !== req.user._id.toString()) {
-                return res.status(403).json({
-                    success: false,
-                    message: 'Access denied'
-                });
-            }
+            // Bài viết draft: chỉ tác giả mới xem được
+            if (article.status === 'draft') {
+                if (article.author._id.toString() !== req.user._id.toString()) {
+                    return res.status(403).json({
+                        success: false,
+                        message: 'Truy cập bị từ chối'
+                    });
+                }
+            } else {
+                // Bài viết Pending/Approved: tác giả, editor hoặc admin có thể xem
+                if (req.user.role === 'author' && article.author._id.toString() !== req.user._id.toString()) {
+                    return res.status(403).json({
+                        success: false,
+                        message: 'Truy cập bị từ chối'
+                    });
+                }
 
-            if (req.user.role === 'reader') {
-                return res.status(403).json({
-                    success: false,
-                    message: 'Access denied'
-                });
+                if (req.user.role === 'reader') {
+                    return res.status(403).json({
+                        success: false,
+                        message: 'Truy cập bị từ chối'
+                    });
+                }
             }
         } else {
-            // Increment views for published articles
+            // Tăng lượt xem cho bài viết published
             article.views += 1;
             await article.save();
         }
@@ -221,7 +241,7 @@ exports.getArticleBySlug = async (req, res) => {
     }
 };
 
-// @desc    Create article
+// @desc    Tạo bài viết mới
 // @route   POST /api/articles
 // @access  Private/Author/Editor/Admin
 exports.createArticle = async (req, res) => {
@@ -253,9 +273,9 @@ exports.createArticle = async (req, res) => {
     }
 };
 
-// @desc    Update article
+// @desc    Cập nhật bài viết
 // @route   PUT /api/articles/:id
-// @access  Private (own articles for authors, all for editor/admin)
+// @access  Private (bài của mình cho author, tất cả cho editor/admin)
 exports.updateArticle = async (req, res) => {
     try {
         let article = await Article.findById(req.params.id);
@@ -263,21 +283,21 @@ exports.updateArticle = async (req, res) => {
         if (!article) {
             return res.status(404).json({
                 success: false,
-                message: 'Article not found'
+                message: 'Bài viết không tồn tại'
             });
         }
 
-        // Check permissions
+        // Kiểm tra quyền
         if (req.user.role === 'author' && article.author.toString() !== req.user._id.toString()) {
             return res.status(403).json({
                 success: false,
-                message: 'Not authorized to update this article'
+                message: 'Không có quyền cập nhật bài viết'
             });
         }
 
         const { title, content, excerpt, thumbnail, category } = req.body;
 
-        // Update fields
+        // Cập nhật các trường
         if (title) article.title = title;
         if (content) article.content = content;
         if (excerpt) article.excerpt = excerpt;
@@ -302,9 +322,9 @@ exports.updateArticle = async (req, res) => {
     }
 };
 
-// @desc    Delete article
+// @desc    Xóa bài viết
 // @route   DELETE /api/articles/:id
-// @access  Private (own draft for authors, all for admin)
+// @access  Private (draft của mình cho author, tất cả cho admin)
 exports.deleteArticle = async (req, res) => {
     try {
         const article = await Article.findById(req.params.id);
@@ -312,13 +332,13 @@ exports.deleteArticle = async (req, res) => {
         if (!article) {
             return res.status(404).json({
                 success: false,
-                message: 'Article not found'
+                message: 'Bài viết không tồn tại'
             });
         }
 
-        // Check permissions
+        // Kiểm tra quyền
         if (req.user.role === 'author') {
-            // Authors can only delete their own draft articles (rejected articles are auto-converted to draft)
+            // Author chỉ có thể xóa bài draft của mình (bài rejected tự động chuyển về draft)
             if (article.author.toString() !== req.user._id.toString()) {
                 return res.status(403).json({
                     success: false,
@@ -328,7 +348,7 @@ exports.deleteArticle = async (req, res) => {
             if (article.status !== 'draft') {
                 return res.status(403).json({
                     success: false,
-                    message: 'Can only delete draft articles'
+                    message: 'Chỉ có thể xóa bài viết nháp'
                 });
             }
         }
@@ -337,7 +357,7 @@ exports.deleteArticle = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: 'Article deleted successfully'
+            message: 'Xóa bài viết thành công'
         });
     } catch (error) {
         res.status(500).json({
@@ -347,7 +367,7 @@ exports.deleteArticle = async (req, res) => {
     }
 };
 
-// @desc    Submit article for review (Author only)
+// @desc    Nộp bài để duyệt (Chỉ Author)
 // @route   PUT /api/articles/:id/submit
 // @access  Private/Author
 exports.submitArticle = async (req, res) => {
@@ -357,23 +377,23 @@ exports.submitArticle = async (req, res) => {
         if (!article) {
             return res.status(404).json({
                 success: false,
-                message: 'Article not found'
+                message: 'Bài viết không tồn tại'
             });
         }
 
-        // Check if user is the author
+        // Kiểm tra xem user có phải là tác giả không
         if (article.author.toString() !== req.user._id.toString()) {
             return res.status(403).json({
                 success: false,
-                message: 'Not authorized to submit this article'
+                message: 'Không có quyền nộp bài viết'
             });
         }
 
-        // Can only submit draft articles (rejected articles are automatically converted to draft)
+        // Chỉ có thể nộp bài draft (bài rejected tự động chuyển về draft)
         if (article.status !== 'draft') {
             return res.status(400).json({
                 success: false,
-                message: 'Can only submit draft articles'
+                message: 'Chỉ có thể nộp bài viết nháp'
             });
         }
 
@@ -396,18 +416,18 @@ exports.submitArticle = async (req, res) => {
     }
 };
 
-// @desc    Update article status (Editor/Admin only)
+// @desc    Cập nhật trạng thái bài viết (Chỉ Editor/Admin)
 // @route   PUT /api/articles/:id/status
 // @access  Private/Editor/Admin
 exports.updateArticleStatus = async (req, res) => {
     try {
         const { status } = req.body;
 
-        // Editor/Admin can only set these statuses
+        // Editor/Admin chỉ có thể set các trạng thái này
         if (!['approved', 'rejected', 'published'].includes(status)) {
             return res.status(400).json({
                 success: false,
-                message: 'Invalid status. Allowed: approved, rejected, published'
+                message: 'Trạng thái không hợp lệ. Chỉ được phép: approved, rejected, published'
             });
         }
 
@@ -416,11 +436,11 @@ exports.updateArticleStatus = async (req, res) => {
         if (!article) {
             return res.status(404).json({
                 success: false,
-                message: 'Article not found'
+                message: 'Bài viết không tồn tại'
             });
         }
 
-        // When rejected, automatically convert to draft so author can edit and resubmit
+        // Khi rejected, tự động chuyển về draft để tác giả có thể sửa và nộp lại
         article.status = status === 'rejected' ? 'draft' : status;
         await article.save();
 
@@ -440,7 +460,7 @@ exports.updateArticleStatus = async (req, res) => {
     }
 };
 
-// @desc    Publish article
+// @desc    Đăng bài viết
 // @route   PUT /api/articles/:id/publish
 // @access  Private/Editor/Admin
 exports.publishArticle = async (req, res) => {
@@ -450,7 +470,7 @@ exports.publishArticle = async (req, res) => {
         if (!article) {
             return res.status(404).json({
                 success: false,
-                message: 'Article not found'
+                message: 'Bài viết không tồn tại'
             });
         }
 

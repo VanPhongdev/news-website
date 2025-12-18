@@ -6,16 +6,16 @@ const createAdminUser = async () => {
     try {
         // Connect to MongoDB
         await mongoose.connect(process.env.MONGODB_URI);
-        console.log('✅ Connected to MongoDB');
+        console.log('Đã kết nối MongoDB');
 
         // Check if admin already exists
         const adminExists = await User.findOne({ role: 'admin' });
 
         if (adminExists) {
-            console.log('⚠️  Admin user already exists:');
-            console.log(`   Username: ${adminExists.username}`);
-            console.log(`   Email: ${adminExists.email}`);
-            console.log('\n💡 If you want to create a new admin, please delete the existing one first.');
+            console.log(' Tài khoản Admin đã tồn tại!');
+            console.log(` Username: ${adminExists.username}`);
+            console.log(` Email: ${adminExists.email}`);
+            console.log('\n Nếu bạn muốn tạo một admin mới, vui lòng xóa admin hiện tại trước.');
             process.exit(0);
         }
 
@@ -30,22 +30,17 @@ const createAdminUser = async () => {
 
         const admin = await User.create(adminData);
 
-        console.log('\n🎉 Admin user created successfully!');
+        console.log('\n Tài khoản Admin đã được tạo thành công!');
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        console.log(`👤 Username: ${admin.username}`);
-        console.log(`📧 Email: ${admin.email}`);
-        console.log(`🔑 Password: ${adminData.password}`);
-        console.log(`👑 Role: ${admin.role}`);
+        console.log(`Username: ${admin.username}`);
+        console.log(`Email: ${admin.email}`);
+        console.log(`Password: ${adminData.password}`);
+        console.log(`Role: ${admin.role}`);
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        console.log('\n⚠️  IMPORTANT: Please change the password after first login!');
-        console.log('💡 You can set custom credentials in .env file:');
-        console.log('   ADMIN_USERNAME=your_username');
-        console.log('   ADMIN_EMAIL=your_email@example.com');
-        console.log('   ADMIN_PASSWORD=your_secure_password\n');
 
         process.exit(0);
     } catch (error) {
-        console.error('❌ Error creating admin user:', error.message);
+        console.error('Lỗi khi tạo tài khoản Admin:', error.message);
         process.exit(1);
     }
 };

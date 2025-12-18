@@ -4,7 +4,7 @@ const slugify = require('slugify');
 const articleSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: [true, 'Please provide a title'],
+        required: [true, 'Vui lòng cung cấp tiêu đề'],
         trim: true
     },
     slug: {
@@ -15,7 +15,7 @@ const articleSchema = new mongoose.Schema({
     },
     content: {
         type: String,
-        required: [true, 'Please provide content']
+        required: [true, 'Vui lòng cung cấp nội dung']
     },
     excerpt: {
         type: String,
@@ -33,7 +33,7 @@ const articleSchema = new mongoose.Schema({
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
-        required: [true, 'Please select a category']
+        required: [true, 'Vui lòng chọn chuyên mục']
     },
     status: {
         type: String,
@@ -57,7 +57,7 @@ const articleSchema = new mongoose.Schema({
     }
 });
 
-// Auto-generate slug from title before validation
+// Tự động tạo slug từ title trước khi validate
 articleSchema.pre('validate', function (next) {
     if (this.isModified('title') || !this.slug) {
         this.slug = slugify(this.title, {
@@ -69,11 +69,11 @@ articleSchema.pre('validate', function (next) {
     next();
 });
 
-// Update timestamp and set publishedAt before saving
+// Cập nhật timestamp và set publishedAt trước khi lưu
 articleSchema.pre('save', function (next) {
     this.updatedAt = Date.now();
 
-    // Set publishedAt when status changes to published
+    // Set publishedAt khi status thay đổi thành published
     if (this.isModified('status') && this.status === 'published' && !this.publishedAt) {
         this.publishedAt = Date.now();
     }

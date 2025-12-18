@@ -88,7 +88,7 @@ const CommentSection = ({ articleId }) => {
         try {
             const response = await commentAPI.toggleLike(commentId);
 
-            // Update the comment in state with new like data
+            // Cập nhật comment trong state với dữ liệu like mới
             const updateCommentLikes = (commentsList) => {
                 return commentsList.map(comment => {
                     if (comment._id === commentId) {
@@ -98,7 +98,7 @@ const CommentSection = ({ articleId }) => {
                             isLiked: response.data.data.isLiked
                         };
                     }
-                    // Update nested replies
+                    // Cập nhật các câu trả lời lồng nhau
                     if (comment.replies && comment.replies.length > 0) {
                         return {
                             ...comment,

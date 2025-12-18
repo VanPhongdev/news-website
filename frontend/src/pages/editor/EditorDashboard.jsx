@@ -121,7 +121,7 @@ const EditorDashboard = () => {
         }
     };
 
-    // Calculate stats
+    // Tính toán thống kê
     const stats = {
         pending: articles.filter(a => a.status === 'pending').length,
         approved: articles.filter(a => a.status === 'approved').length,
@@ -129,7 +129,7 @@ const EditorDashboard = () => {
         pendingDeletions: deletionRequests.filter(r => r.status === 'pending').length
     };
 
-    // Filter articles by tab
+    // Lọc bài viết theo tab
     const filteredArticles = articles.filter(article => {
         if (activeTab === 'pending') return article.status === 'pending';
         if (activeTab === 'approved') return article.status === 'approved';

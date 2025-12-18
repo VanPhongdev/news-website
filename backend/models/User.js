@@ -4,30 +4,30 @@ const bcrypt = require('bcryptjs');
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
-        required: [true, 'Please provide a username'],
+        required: [true, 'Vui lòng cung cấp tên người dùng'],
         unique: true,
         trim: true,
         lowercase: true, // Tự động chuyển thành chữ thường
-        minlength: [3, 'Username must be at least 3 characters'],
-        match: [/^[a-z0-9_]+$/, 'Username can only contain lowercase letters, numbers, and underscores']
+        minlength: [3, 'Tên người dùng phải ít nhất 3 ký tự'],
+        match: [/^[a-z0-9_]+$/, 'Tên người dùng chỉ được chứa chữ thường, số và dấu gạch dưới']
     },
     displayName: {
         type: String,
-        required: [true, 'Please provide your full name'],
+        required: [true, 'Vui lòng cung cấp tên hiển thị'],
         trim: true,
-        minlength: [2, 'Display name must be at least 2 characters']
+        minlength: [2, 'Tên hiển thị phải ít nhất 2 ký tự']
     },
     email: {
         type: String,
-        required: [true, 'Please provide an email'],
+        required: [true, 'Vui lòng cung cấp một email'],
         unique: true,
         lowercase: true,
-        match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email']
+        match: [/^\S+@\S+\.\S+$/, 'Vui lòng cung cấp một email hợp lệ']
     },
     password: {
         type: String,
-        required: [true, 'Please provide a password'],
-        minlength: [6, 'Password must be at least 6 characters'],
+        required: [true, 'Vui lòng cung cấp một mật khẩu'],
+        minlength: [6, 'Mật khẩu phải ít nhất 6 ký tự'],
         select: false
     },
     role: {
@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-// Hash password before saving
+// Hash password trước khi lưu
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
         return next();
@@ -56,13 +56,13 @@ userSchema.pre('save', async function (next) {
     next();
 });
 
-// Update updatedAt on save
+// Update updatedAt trước khi lưu
 userSchema.pre('save', function (next) {
     this.updatedAt = Date.now();
     next();
 });
 
-// Method to compare password
+// Hàm so sánh mật khẩu
 userSchema.methods.comparePassword = async function (candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password);
 };

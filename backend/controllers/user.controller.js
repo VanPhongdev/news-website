@@ -1,6 +1,6 @@
 const User = require('../models/User');
 
-// @desc    Get all users
+// @desc    Lấy tất cả người dùng
 // @route   GET /api/users
 // @access  Private/Admin
 exports.getUsers = async (req, res) => {
@@ -20,7 +20,7 @@ exports.getUsers = async (req, res) => {
     }
 };
 
-// @desc    Get single user
+// @desc    Lấy một người dùng
 // @route   GET /api/users/:id
 // @access  Private/Admin
 exports.getUser = async (req, res) => {
@@ -30,7 +30,7 @@ exports.getUser = async (req, res) => {
         if (!user) {
             return res.status(404).json({
                 success: false,
-                message: 'User not found'
+                message: 'Người dùng không tồn tại'
             });
         }
 
@@ -46,7 +46,7 @@ exports.getUser = async (req, res) => {
     }
 };
 
-// @desc    Update user
+// @desc    Cập nhật người dùng
 // @route   PUT /api/users/:id
 // @access  Private/Admin
 exports.updateUser = async (req, res) => {
@@ -58,11 +58,11 @@ exports.updateUser = async (req, res) => {
         if (!user) {
             return res.status(404).json({
                 success: false,
-                message: 'User not found'
+                message: 'Người dùng không tồn tại'
             });
         }
 
-        // Update fields
+        // Cập nhật các trường
         if (username) user.username = username;
         if (email) user.email = email;
 
@@ -80,7 +80,7 @@ exports.updateUser = async (req, res) => {
     }
 };
 
-// @desc    Delete user
+// @desc    Xóa người dùng
 // @route   DELETE /api/users/:id
 // @access  Private/Admin
 exports.deleteUser = async (req, res) => {
@@ -90,7 +90,7 @@ exports.deleteUser = async (req, res) => {
         if (!user) {
             return res.status(404).json({
                 success: false,
-                message: 'User not found'
+                message: 'Người dùng không tồn tại'
             });
         }
 
@@ -98,7 +98,7 @@ exports.deleteUser = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: 'User deleted successfully'
+            message: 'Người dùng đã được xóa thành công'
         });
     } catch (error) {
         res.status(500).json({
@@ -108,7 +108,7 @@ exports.deleteUser = async (req, res) => {
     }
 };
 
-// @desc    Update user role
+// @desc    Cập nhật vai trò người dùng
 // @route   PUT /api/users/:id/role
 // @access  Private/Admin
 exports.updateUserRole = async (req, res) => {
@@ -118,7 +118,7 @@ exports.updateUserRole = async (req, res) => {
         if (!['admin', 'editor', 'author', 'reader'].includes(role)) {
             return res.status(400).json({
                 success: false,
-                message: 'Invalid role'
+                message: 'Vai trò không hợp lệ'
             });
         }
 
@@ -127,7 +127,7 @@ exports.updateUserRole = async (req, res) => {
         if (!user) {
             return res.status(404).json({
                 success: false,
-                message: 'User not found'
+                message: 'Người dùng không tồn tại'
             });
         }
 

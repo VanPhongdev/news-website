@@ -12,7 +12,7 @@ const ArticleDetail = () => {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        // Scroll to top when article changes
+        // Cuộn lên đầu trang khi bài viết thay đổi
         window.scrollTo(0, 0);
 
         let isMounted = true;
@@ -22,7 +22,7 @@ const ArticleDetail = () => {
                 const response = await articleAPI.getArticleBySlug(slug);
                 if (isMounted) {
                     setArticle(response.data.data);
-                    // Fetch related articles from same category
+                    // Lấy bài viết liên quan từ cùng chuyên mục
                     if (response.data.data.category) {
                         fetchRelatedArticles(response.data.data.category._id, response.data.data._id);
                     }
@@ -46,7 +46,7 @@ const ArticleDetail = () => {
                     limit: 4
                 });
                 if (isMounted) {
-                    // Filter out current article
+                    // Lọc bỏ bài viết hiện tại
                     const filtered = response.data.data.filter(a => a._id !== currentArticleId);
                     setRelatedArticles(filtered.slice(0, 2));
                 }

@@ -32,7 +32,7 @@ const Login = () => {
         try {
             const userData = await login(formData.email, formData.password);
 
-            // Redirect based on user role
+            // Chuyển hướng dựa trên vai trò người dùng
             if (userData.role === 'admin') {
                 navigate('/admin');
             } else if (userData.role === 'editor') {
@@ -40,7 +40,7 @@ const Login = () => {
             } else if (userData.role === 'author') {
                 navigate('/author');
             } else {
-                navigate('/'); // reader or default
+                navigate('/'); // reader hoặc mặc định
             }
         } catch (error) {
             setError(error.response?.data?.message || 'Đăng nhập thất bại');

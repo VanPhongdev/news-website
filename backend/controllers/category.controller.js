@@ -1,6 +1,6 @@
 const Category = require('../models/Category');
 
-// @desc    Get all categories
+// @desc    Lấy tất cả chuyên mục
 // @route   GET /api/categories
 // @access  Public
 exports.getCategories = async (req, res) => {
@@ -20,7 +20,7 @@ exports.getCategories = async (req, res) => {
     }
 };
 
-// @desc    Get single category
+// @desc    Lấy một chuyên mục
 // @route   GET /api/categories/:id
 // @access  Public
 exports.getCategory = async (req, res) => {
@@ -30,7 +30,7 @@ exports.getCategory = async (req, res) => {
         if (!category) {
             return res.status(404).json({
                 success: false,
-                message: 'Category not found'
+                message: 'Chuyên mục không tồn tại'
             });
         }
 
@@ -46,20 +46,20 @@ exports.getCategory = async (req, res) => {
     }
 };
 
-// @desc    Create category
+// @desc    Tạo chuyên mục
 // @route   POST /api/categories
 // @access  Private/Admin/Editor
 exports.createCategory = async (req, res) => {
     try {
         const { name, description } = req.body;
 
-        // Check if category already exists
+        // Kiểm tra chuyên mục đã tồn tại chưa
         const categoryExists = await Category.findOne({ name });
 
         if (categoryExists) {
             return res.status(400).json({
                 success: false,
-                message: 'Category already exists'
+                message: 'Chuyên mục đã tồn tại'
             });
         }
 
@@ -81,7 +81,7 @@ exports.createCategory = async (req, res) => {
     }
 };
 
-// @desc    Update category
+// @desc    Cập nhật chuyên mục
 // @route   PUT /api/categories/:id
 // @access  Private/Admin/Editor
 exports.updateCategory = async (req, res) => {
@@ -93,11 +93,11 @@ exports.updateCategory = async (req, res) => {
         if (!category) {
             return res.status(404).json({
                 success: false,
-                message: 'Category not found'
+                message: 'Chuyên mục không tồn tại'
             });
         }
 
-        // Update fields
+        // Cập nhật các trường
         if (name) category.name = name;
         if (description) category.description = description;
 
@@ -115,7 +115,7 @@ exports.updateCategory = async (req, res) => {
     }
 };
 
-// @desc    Delete category
+// @desc    Xóa chuyên mục
 // @route   DELETE /api/categories/:id
 // @access  Private/Admin
 exports.deleteCategory = async (req, res) => {
@@ -125,7 +125,7 @@ exports.deleteCategory = async (req, res) => {
         if (!category) {
             return res.status(404).json({
                 success: false,
-                message: 'Category not found'
+                message: 'Chuyên mục không tồn tại'
             });
         }
 
@@ -133,7 +133,7 @@ exports.deleteCategory = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: 'Category deleted successfully'
+            message: 'Xóa chuyên mục thành công'
         });
     } catch (error) {
         res.status(500).json({

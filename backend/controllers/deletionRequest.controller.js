@@ -1,39 +1,39 @@
 const DeletionRequest = require('../models/DeletionRequest');
 const Article = require('../models/Article');
 
-// @desc    Create deletion request
+// @desc    Tạo yêu cầu xóa
 // @route   POST /api/deletion-requests
-// @access  Private (Author only)
+// @access  Private (Chỉ Author)
 exports.createRequest = async (req, res) => {
     try {
         const { article, reason } = req.body;
 
-        // Check if article exists
+        // Kiểm tra xem bài viết có tồn tại không
         const articleDoc = await Article.findById(article);
         if (!articleDoc) {
             return res.status(404).json({
                 success: false,
-                message: 'Article not found'
+                message: 'Bài viết không tồn tại'
             });
         }
 
-        // Check if user is the author of the article
+        // Kiểm tra xem user có phải là tác giả của bài viết không
         if (articleDoc.author.toString() !== req.user._id.toString()) {
             return res.status(403).json({
                 success: false,
-                message: 'You can only request deletion of your own articles'
+                message: 'Bạn chỉ có thể yêu cầu xóa bài viết của mình'
             });
         }
 
-        // Check if article is published
+        // Kiểm tra xem bài viết đã được đăng chưa
         if (articleDoc.status !== 'published') {
             return res.status(400).json({
                 success: false,
-                message: 'You can only request deletion of published articles'
+                message: 'Bạn chỉ có thể yêu cầu xóa bài viết đã được đăng'
             });
         }
 
-        // Check if there's already a pending request for this article
+        // Kiểm tra xem đã có yêu cầu pending cho bài viết này chưa
         const existingRequest = await DeletionRequest.findOne({
             article,
             status: 'pending'
@@ -42,11 +42,11 @@ exports.createRequest = async (req, res) => {
         if (existingRequest) {
             return res.status(400).json({
                 success: false,
-                message: 'There is already a pending deletion request for this article'
+                message: 'Bạn đã yêu cầu xóa bài viết này'
             });
         }
 
-        // Create deletion request
+        // Tạo yêu cầu xóa
         const deletionRequest = await DeletionRequest.create({
             article,
             author: req.user._id,
@@ -69,9 +69,9 @@ exports.createRequest = async (req, res) => {
     }
 };
 
-// @desc    Get all deletion requests
+// @desc    Lấy tất cả yêu cầu xóa
 // @route   GET /api/deletion-requests
-// @access  Private (Admin/Editor only)
+// @access  Private (Chỉ Admin/Editor)
 exports.getRequests = async (req, res) => {
     try {
         const { status } = req.query;
@@ -96,7 +96,7 @@ exports.getRequests = async (req, res) => {
     }
 };
 
-// @desc    Get my deletion requests
+// @desc    Lấy yêu cầu xóa của tôi
 // @route   GET /api/deletion-requests/my-requests
 // @access  Private (Author)
 exports.getMyRequests = async (req, res) => {
@@ -119,9 +119,9 @@ exports.getMyRequests = async (req, res) => {
     }
 };
 
-// @desc    Approve deletion request and delete article
+// @desc    Chấp nhận yêu cầu xóa và xóa bài viết
 // @route   PATCH /api/deletion-requests/:id/approve
-// @access  Private (Admin/Editor only)
+// @access  Private (Chỉ Admin/Editor)
 exports.approveRequest = async (req, res) => {
     try {
         const request = await DeletionRequest.findById(req.params.id);
@@ -129,24 +129,24 @@ exports.approveRequest = async (req, res) => {
         if (!request) {
             return res.status(404).json({
                 success: false,
-                message: 'Deletion request not found'
+                message: 'Yêu cầu xóa không tồn tại'
             });
         }
 
         if (request.status !== 'pending') {
             return res.status(400).json({
                 success: false,
-                message: 'This request has already been reviewed'
+                message: 'Yêu cầu này đã được xem xét'
             });
         }
 
-        // Update request status
+        // Cập nhật trạng thái yêu cầu
         request.status = 'approved';
         request.reviewedBy = req.user._id;
         request.reviewedAt = Date.now();
         await request.save();
 
-        // Delete the article
+        // Xóa bài viết
         await Article.findByIdAndDelete(request.article);
 
         const populatedRequest = await DeletionRequest.findById(request._id)
@@ -156,7 +156,7 @@ exports.approveRequest = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: 'Deletion request approved and article deleted',
+            message: 'Yêu cầu xóa được chấp nhận và bài viết đã được xóa',
             data: populatedRequest
         });
     } catch (error) {
@@ -167,9 +167,9 @@ exports.approveRequest = async (req, res) => {
     }
 };
 
-// @desc    Reject deletion request
+// @desc    Từ chối yêu cầu xóa
 // @route   PATCH /api/deletion-requests/:id/reject
-// @access  Private (Admin/Editor only)
+// @access  Private (Chỉ Admin/Editor)
 exports.rejectRequest = async (req, res) => {
     try {
         const request = await DeletionRequest.findById(req.params.id);
@@ -177,18 +177,18 @@ exports.rejectRequest = async (req, res) => {
         if (!request) {
             return res.status(404).json({
                 success: false,
-                message: 'Deletion request not found'
+                message: 'Yêu cầu xóa không tồn tại'
             });
         }
 
         if (request.status !== 'pending') {
             return res.status(400).json({
                 success: false,
-                message: 'This request has already been reviewed'
+                message: 'Yêu cầu này đã được xem xét'
             });
         }
 
-        // Update request status
+        // Cập nhật trạng thái yêu cầu
         request.status = 'rejected';
         request.reviewedBy = req.user._id;
         request.reviewedAt = Date.now();
@@ -201,7 +201,7 @@ exports.rejectRequest = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: 'Deletion request rejected',
+            message: 'Yêu cầu xóa bị từ chối',
             data: populatedRequest
         });
     } catch (error) {

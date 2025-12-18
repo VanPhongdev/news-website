@@ -1,17 +1,17 @@
-// Check if user has required role
+// Kiểm tra xem user có vai trò yêu cầu không
 exports.checkRole = (...roles) => {
     return (req, res, next) => {
         if (!req.user) {
             return res.status(401).json({
                 success: false,
-                message: 'Not authenticated'
+                message: 'Chưa xác thực'
             });
         }
 
         if (!roles.includes(req.user.role)) {
             return res.status(403).json({
                 success: false,
-                message: `User role '${req.user.role}' is not authorized to access this route`
+                message: `Vai trò '${req.user.role}' không có quyền truy cập`
             });
         }
 
@@ -19,50 +19,50 @@ exports.checkRole = (...roles) => {
     };
 };
 
-// Check if user is admin
+// Kiểm tra xem user có phải là admin không
 exports.isAdmin = (req, res, next) => {
     if (req.user && req.user.role === 'admin') {
         next();
     } else {
         res.status(403).json({
             success: false,
-            message: 'Admin access required'
+            message: 'Yêu cầu quyền Admin'
         });
     }
 };
 
-// Check if user is editor or admin
+// Kiểm tra xem user có phải là editor hoặc admin không
 exports.isEditorOrAdmin = (req, res, next) => {
     if (req.user && (req.user.role === 'editor' || req.user.role === 'admin')) {
         next();
     } else {
         res.status(403).json({
             success: false,
-            message: 'Editor or Admin access required'
+            message: 'Yêu cầu quyền Editor hoặc Admin'
         });
     }
 };
 
-// Check if user is author, editor, or admin
+// Kiểm tra xem user có phải là author, editor hoặc admin không
 exports.canWriteArticle = (req, res, next) => {
     if (req.user && ['author', 'editor', 'admin'].includes(req.user.role)) {
         next();
     } else {
         res.status(403).json({
             success: false,
-            message: 'Author, Editor, or Admin access required'
+            message: 'Yêu cầu quyền Author, Editor hoặc Admin'
         });
     }
 };
 
-// Check if user can comment (reader or author only)
+// Kiểm tra xem user có thể bình luận không (chỉ reader hoặc author)
 exports.canComment = (req, res, next) => {
     if (req.user && ['reader', 'author'].includes(req.user.role)) {
         next();
     } else {
         res.status(403).json({
             success: false,
-            message: 'Only Reader or Author can comment'
+            message: 'Chỉ Reader hoặc Author mới có thể bình luận'
         });
     }
 };

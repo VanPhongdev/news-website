@@ -61,7 +61,7 @@ async function getAuthors() {
     const authors = await User.find({ role: 'author' });
 
     if (authors.length === 0) {
-        console.log('⚠️  Không tìm thấy author nào, tạo rss-bot...');
+        console.log('Không tìm thấy author nào, tạo rss-bot...');
         const rssBot = await User.create({
             username: 'rss-bot',
             email: 'rss-bot@tintuc24h.com',
@@ -107,13 +107,13 @@ function getExcerpt(content, maxLength = 200) {
 // Hàm fetch tin từ một RSS feed
 async function fetchFeed(feedConfig, authors, categories) {
     try {
-        console.log(`\n📡 Đang fetch: ${feedConfig.source} - ${feedConfig.categorySlug}...`);
+        console.log(`\n Đang fetch: ${feedConfig.source} - ${feedConfig.categorySlug}...`);
 
         const feed = await parser.parseURL(feedConfig.url);
         const category = categories.find(c => c.slug === feedConfig.categorySlug);
 
         if (!category) {
-            console.log(`⚠️  Không tìm thấy category: ${feedConfig.categorySlug}`);
+            console.log(`  Không tìm thấy category: ${feedConfig.categorySlug}`);
             return { success: 0, skipped: 0, failed: 0 };
         }
 
@@ -164,18 +164,18 @@ async function fetchFeed(feedConfig, authors, categories) {
 
                 await Article.create(articleData);
                 successCount++;
-                console.log(`   ✅ Đã lưu: ${item.title.substring(0, 50)}...`);
+                console.log(`   Đã lưu: ${item.title.substring(0, 50)}...`);
 
             } catch (error) {
                 failedCount++;
-                console.log(`   ❌ Lỗi: ${error.message}`);
+                console.log(`   Lỗi: ${error.message}`);
             }
         }
 
         return { success: successCount, skipped: skippedCount, failed: failedCount };
 
     } catch (error) {
-        console.log(`❌ Lỗi fetch feed ${feedConfig.source}: ${error.message}`);
+        console.log(` Lỗi fetch feed ${feedConfig.source}: ${error.message}`);
         return { success: 0, skipped: 0, failed: 0 };
     }
 }
@@ -185,14 +185,14 @@ async function fetchAllNews() {
     try {
         // Kết nối MongoDB
         await mongoose.connect(process.env.MONGODB_URI);
-        console.log('✅ Đã kết nối MongoDB\n');
+        console.log(' Đã kết nối MongoDB\n');
 
         // Lấy authors và categories
         const authors = await getAuthors();
         const categories = await Category.find();
 
-        console.log(`� Authors: ${authors.length} tác giả (${authors.map(a => a.username).join(', ')})`);
-        console.log(`📁 Categories: ${categories.length} chuyên mục\n`);
+        console.log(` Authors: ${authors.length} tác giả (${authors.map(a => a.username).join(', ')})`);
+        console.log(` Categories: ${categories.length} chuyên mục\n`);
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
         let totalSuccess = 0;
@@ -211,16 +211,16 @@ async function fetchAllNews() {
         }
 
         console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        console.log('📊 KẾT QUẢ:');
-        console.log(`   ✅ Thành công: ${totalSuccess} bài`);
-        console.log(`   ⏭️  Đã tồn tại: ${totalSkipped} bài`);
-        console.log(`   ❌ Thất bại: ${totalFailed} bài`);
+        console.log(' KẾT QUẢ:');
+        console.log(` Thành công: ${totalSuccess} bài`);
+        console.log(` Đã tồn tại: ${totalSkipped} bài`);
+        console.log(` Thất bại: ${totalFailed} bài`);
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
         process.exit(0);
 
     } catch (error) {
-        console.error('❌ Lỗi:', error.message);
+        console.error(' Lỗi:', error.message);
         process.exit(1);
     }
 }

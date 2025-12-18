@@ -19,7 +19,7 @@ const HomePage = () => {
 
     useEffect(() => {
         fetchArticles();
-        // Scroll to top when category or search changes
+        // Cuộn lên đầu trang khi category hoặc search thay đổi
         window.scrollTo(0, 0);
     }, [currentPage, searchTerm, selectedCategory]);
 

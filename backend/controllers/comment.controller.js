@@ -1,34 +1,34 @@
 const Comment = require('../models/Comment');
 const Article = require('../models/Article');
 
-// @desc    Get all comments for an article
+// @desc    Lấy tất cả bình luận của một bài viết
 // @route   GET /api/articles/:articleId/comments
 // @access  Public
 exports.getCommentsByArticle = async (req, res) => {
     try {
         const { articleId } = req.params;
 
-        // Check if article exists
+        // Kiểm tra xem bài viết có tồn tại không
         const article = await Article.findById(articleId);
         if (!article) {
             return res.status(404).json({
                 success: false,
-                message: 'Article not found'
+                message: 'Bài viết không tồn tại'
             });
         }
 
-        // Get only top-level comments (parent is null)
+        // Chỉ lấy bình luận cấp cao nhất (parent là null)
         const comments = await Comment.find({ article: articleId, parent: null })
             .populate('author', 'username')
             .sort({ createdAt: -1 });
 
-        // Recursive function to get all nested replies
+        // Hàm đệ quy để lấy tất cả các câu trả lời lồng nhau
         const getRepliesRecursive = async (commentId) => {
             const replies = await Comment.find({ parent: commentId })
                 .populate('author', 'username')
                 .sort({ createdAt: 1 });
 
-            // For each reply, get its nested replies
+            // Với mỗi câu trả lời, lấy các câu trả lời lồng nhau của nó
             const repliesWithNested = await Promise.all(
                 replies.map(async (reply) => {
                     const nestedReplies = await getRepliesRecursive(reply._id);
@@ -43,7 +43,7 @@ exports.getCommentsByArticle = async (req, res) => {
             return repliesWithNested;
         };
 
-        // For each comment, get its replies recursively
+        // Với mỗi bình luận, lấy các câu trả lời đệ quy
         const commentsWithReplies = await Promise.all(
             comments.map(async (comment) => {
                 const replies = await getRepliesRecursive(comment._id);
@@ -69,31 +69,31 @@ exports.getCommentsByArticle = async (req, res) => {
     }
 };
 
-// @desc    Create a comment
+// @desc    Tạo bình luận
 // @route   POST /api/articles/:articleId/comments
-// @access  Private (Reader and Author only)
+// @access  Private (Chỉ Reader và Author)
 exports.createComment = async (req, res) => {
     try {
         const { articleId } = req.params;
         const { content, parent } = req.body;
 
-        // Check if article exists and is published
+        // Kiểm tra xem bài viết có tồn tại và đã được đăng chưa
         const article = await Article.findById(articleId);
         if (!article) {
             return res.status(404).json({
                 success: false,
-                message: 'Article not found'
+                message: 'Bài viết không tồn tại'
             });
         }
 
         if (article.status !== 'published') {
             return res.status(400).json({
                 success: false,
-                message: 'Cannot comment on unpublished articles'
+                message: 'Không thể bình luận trên bài viết chưa được đăng'
             });
         }
 
-        // Create comment (with optional parent for replies)
+        // Tạo bình luận (với parent tùy chọn cho câu trả lời)
         const comment = await Comment.create({
             content,
             article: articleId,
@@ -101,7 +101,7 @@ exports.createComment = async (req, res) => {
             parent: parent || null
         });
 
-        // Populate author information
+        // Populate thông tin tác giả
         await comment.populate('author', 'username');
 
         res.status(201).json({
@@ -116,9 +116,9 @@ exports.createComment = async (req, res) => {
     }
 };
 
-// @desc    Update a comment
+// @desc    Cập nhật bình luận
 // @route   PUT /api/comments/:id
-// @access  Private (Comment owner only)
+// @access  Private (Chỉ chủ bình luận)
 exports.updateComment = async (req, res) => {
     try {
         const { id } = req.params;
@@ -129,15 +129,15 @@ exports.updateComment = async (req, res) => {
         if (!comment) {
             return res.status(404).json({
                 success: false,
-                message: 'Comment not found'
+                message: 'Bình luận không tồn tại'
             });
         }
 
-        // Check if user is the comment owner
+        // Kiểm tra xem user có phải là chủ bình luận không
         if (comment.author.toString() !== req.user._id.toString()) {
             return res.status(403).json({
                 success: false,
-                message: 'Not authorized to update this comment'
+                message: 'Không có quyền cập nhật bình luận'
             });
         }
 
@@ -158,9 +158,9 @@ exports.updateComment = async (req, res) => {
     }
 };
 
-// @desc    Delete a comment
+// @desc    Xóa bình luận
 // @route   DELETE /api/comments/:id
-// @access  Private (Comment owner or Admin)
+// @access  Private (Chủ bình luận hoặc Admin)
 exports.deleteComment = async (req, res) => {
     try {
         const { id } = req.params;
@@ -170,34 +170,34 @@ exports.deleteComment = async (req, res) => {
         if (!comment) {
             return res.status(404).json({
                 success: false,
-                message: 'Comment not found'
+                message: 'Bình luận không tồn tại'
             });
         }
 
-        // Check if user is the comment owner or admin
+        // Kiểm tra xem user có phải là chủ bình luận hoặc admin không
         if (comment.author.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
             return res.status(403).json({
                 success: false,
-                message: 'Not authorized to delete this comment'
+                message: 'Không có quyền xóa bình luận'
             });
         }
 
-        // Recursive function to delete all nested replies
+        // Hàm đệ quy để xóa tất cả các câu trả lời lồng nhau
         const deleteRepliesRecursive = async (commentId) => {
             const replies = await Comment.find({ parent: commentId });
 
             for (const reply of replies) {
-                // Delete nested replies of this reply
+                // Xóa các câu trả lời lồng nhau của câu trả lời này
                 await deleteRepliesRecursive(reply._id);
-                // Delete the reply itself
+                // Xóa chính câu trả lời
                 await reply.deleteOne();
             }
         };
 
-        // Delete all nested replies first
+        // Xóa tất cả các câu trả lời lồng nhau trước
         await deleteRepliesRecursive(comment._id);
 
-        // Delete the comment itself
+        // Xóa chính bình luận
         await comment.deleteOne();
 
         res.status(200).json({
@@ -212,7 +212,7 @@ exports.deleteComment = async (req, res) => {
     }
 };
 
-// @desc    Toggle like on a comment
+// @desc    Bật/tắt thích bình luận
 // @route   POST /api/comments/:id/like
 // @access  Private
 exports.toggleLike = async (req, res) => {
@@ -225,18 +225,18 @@ exports.toggleLike = async (req, res) => {
         if (!comment) {
             return res.status(404).json({
                 success: false,
-                message: 'Comment not found'
+                message: 'Bình luận không tồn tại'
             });
         }
 
-        // Check if user already liked the comment
+        // Kiểm tra xem user đã thích bình luận chưa
         const likeIndex = comment.likes.indexOf(userId);
 
         if (likeIndex > -1) {
-            // Unlike: remove user from likes array
+            // Unlike: xóa user khỏi mảng likes
             comment.likes.splice(likeIndex, 1);
         } else {
-            // Like: add user to likes array
+            // Like: thêm user vào mảng likes
             comment.likes.push(userId);
         }
 

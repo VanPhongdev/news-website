@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
         const { token, ...userData } = response.data.data;
         localStorage.setItem('token', token);
         setUser(userData);
-        return userData; // Return user data for role-based redirect
+        return userData; // Trả về dữ liệu user để chuyển hướng theo role
     };
 
     const register = async (displayName, username, email, password, role = 'reader') => {
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
         const { token, ...userData } = response.data.data;
         localStorage.setItem('token', token);
         setUser(userData);
-        return userData; // Return user data for role-based redirect
+        return userData; // Trả về dữ liệu user để chuyển hướng theo role
     };
 
     const logout = () => {

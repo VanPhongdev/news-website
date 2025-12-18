@@ -4,7 +4,7 @@ const slugify = require('slugify');
 const categorySchema = new mongoose.Schema({
     name: {
         type: String,
-        required: [true, 'Please provide a category name'],
+        required: [true, 'Vui lòng cung cấp tên chuyên mục'],
         unique: true,
         trim: true
     },
@@ -33,7 +33,7 @@ const categorySchema = new mongoose.Schema({
     }
 });
 
-// Auto-generate slug from name before validation
+// Tự động tạo slug từ name trước khi validate
 categorySchema.pre('validate', function (next) {
     if (this.isModified('name') || !this.slug) {
         this.slug = slugify(this.name, {
@@ -45,7 +45,7 @@ categorySchema.pre('validate', function (next) {
     next()
 });
 
-// Update timestamp before saving
+// Cập nhật timestamp trước khi lưu
 categorySchema.pre('save', function (next) {
     this.updatedAt = Date.now();
     next();

@@ -125,7 +125,7 @@ const AuthorDashboard = () => {
         return deletionRequests.find(req => req.article?._id === articleId && req.status === 'pending');
     };
 
-    // Calculate stats
+    // Tính toán thống kê
     const stats = {
         totalArticles: articles.length,
         published: articles.filter(a => a.status === 'published').length,
@@ -133,7 +133,7 @@ const AuthorDashboard = () => {
         totalViews: articles.reduce((sum, a) => sum + (a.views || 0), 0)
     };
 
-    // Filter articles by tab
+    // Lọc bài viết theo tab
     const filteredArticles = articles.filter(article => {
         if (activeTab === 'all') return true;
         if (activeTab === 'published') return article.status === 'published';

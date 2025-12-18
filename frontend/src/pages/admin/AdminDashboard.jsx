@@ -120,7 +120,7 @@ const AdminDashboard = () => {
         }
     };
 
-    // Calculate stats
+    // Tính toán thống kê
     const stats = {
         totalUsers: users.length,
         totalArticles: articles.length,

@@ -14,7 +14,7 @@ const {
 const { protect } = require('../middleware/auth.middleware');
 const { canWriteArticle, isEditorOrAdmin } = require('../middleware/role.middleware');
 
-// Middleware to optionally authenticate (for getArticles and getArticle)
+// Middleware để xác thực tùy chọn (cho getArticles và getArticle)
 const optionalAuth = (req, res, next) => {
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         return protect(req, res, next);
@@ -22,12 +22,12 @@ const optionalAuth = (req, res, next) => {
     next();
 };
 
-// Public/Optional auth routes
+// Routes public/xác thực tùy chọn
 router.route('/')
     .get(optionalAuth, getArticles)
     .post(protect, canWriteArticle, createArticle);
 
-// Slug-based route (must be before /:id to avoid conflicts)
+// Route dựa trên slug (phải đặt trước /:id để tránh xung đột)
 router.route('/slug/:slug')
     .get(optionalAuth, getArticleBySlug);
 
@@ -36,11 +36,11 @@ router.route('/:id')
     .put(protect, canWriteArticle, updateArticle)
     .delete(protect, deleteArticle);
 
-// Author route - submit article for review
+// Route cho Author - nộp bài để duyệt
 router.route('/:id/submit')
     .put(protect, canWriteArticle, submitArticle);
 
-// Editor/Admin only routes
+// Routes chỉ dành cho Editor/Admin
 router.route('/:id/status')
     .put(protect, isEditorOrAdmin, updateArticleStatus);
 

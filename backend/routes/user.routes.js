@@ -10,7 +10,7 @@ const {
 const { protect } = require('../middleware/auth.middleware');
 const { isAdmin } = require('../middleware/role.middleware');
 
-// All user routes require admin access
+// Tất cả user routes yêu cầu quyền admin
 router.use(protect);
 router.use(isAdmin);
 
